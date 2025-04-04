@@ -9,20 +9,151 @@
 <body>
     <header>
         <h1>Anales de la Ciencia</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="personas.html">Personas</a></li>
-                <li><a href="entidades.html">Entidades</a></li>
-                <li><a href="productos.html">Productos</a></li>
-            </ul>
-        </nav>
+        <form id="formulario-inicio-sesion" class="formulario-inicio-sesion">
+            <div class="grupo-formulario">
+                <label for="usuario">Usuario:</label>
+                <input type="text" id="usuario" name="usuario" required>
+            </div>
+            <div class="grupo-formulario">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <button id="boton-cerrar-sesion" style="display: none;">Logout</button>
     </header>
-    
-    <main>
-        <h2>Bienvenido a Anales de la Ciencia</h2>
-        <p>Consulta información sobre científicos, entidades y productos científicos.</p>
-    </main>
+
+    <!-- Vista normal -->
+    <div id="vista-usuario-normal">
+        <main>
+            <!-- Sección de Inventos -->
+            <section class="seccion-datos">
+                <h2>Productos</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Ícono CSS">
+                        <span>CSS</span>
+                    </div>
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
+                        <span>JavaScript</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Científicos -->
+            <section class="seccion-datos">
+                <h2>Científicos</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Cientifico1">
+                        <span>Cientifico1</span>
+                    </div>
+            </section>
+
+            <!-- Sección de Entidades -->
+            <section class="seccion-datos">
+                <h2>Entidades</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Logo IBM">
+                        <span>IBM</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Vista de Lector -->
+    <div id="vista-lector" style="display: none;">
+        <main>
+            <!-- Sección de Inventos -->
+            <section class="seccion-datos">
+                <h2>Productos</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Ícono CSS">
+                        <span>CSS</span>
+                    </div>
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
+                        <span>JavaScript</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Científicos -->
+            <section class="seccion-datos">
+                <h2>Científicos</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Cientifico1">
+                        <span>Cientifico1</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Entidades -->
+            <section class="seccion-datos">
+                <h2>Entidades</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Logo IBM">
+                        <span>IBM</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Vista de Escritor -->
+    <div id="vista-escritor" style="display: none;">
+        <main>
+            <!-- Sección de Inventos -->
+            <section class="seccion-datos">
+                <h2>Productos</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Ícono CSS">
+                        <span>CSS</span>
+                        <button class="boton-eliminar">delete</button>
+                    </div>
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
+                        <span>JavaScript</span>
+                        <button class="boton-eliminar">delete</button>
+                    </div>
+                </div>
+                <button class="boton-crear">create</button>
+            </section>
+
+            <!-- Sección de Científicos -->
+            <section class="seccion-datos">
+                <h2>Científicos</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Cientifico1">
+                        <span>Cientifico1</span>
+                        <button class="boton-eliminar">delete</button>
+                    </div>
+                </div>
+                <button class="boton-crear">create</button>
+            </section>
+
+            <!-- Sección de Entidades -->
+            <section class="seccion-datos">
+                <h2>Entidades</h2>
+                <div class="cuadricula-datos">
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Logo IBM">
+                        <span>IBM</span>
+                        <button class="boton-eliminar">delete</button>
+                    </div>
+                </div>
+                <button class="boton-crear">create</button>
+            </section>
+        </main>
+    </div>
 
     <script src="js/main.js"></script>
 </body>
