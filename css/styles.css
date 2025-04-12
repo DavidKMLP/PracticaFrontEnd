@@ -22,7 +22,10 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #645ee6 0%, #645ee6 5%, transparent 5%, transparent 10%, #645ee6 10%, #645ee6 15%, transparent 15%, transparent 20%, #645ee6 20%, #645ee6 25%, transparent 25%, transparent 30%, #645ee6 30%, #645ee6 35%, transparent 35%, transparent 40%, #645ee6 40%, #645ee6 45%, transparent 45%, transparent 50%, #645ee6 50%, #645ee6 55%, transparent 55%, transparent 60%, #645ee6 60%, #645ee6 65%, transparent 65%, transparent 70%, #645ee6 70%, #645ee6 75%, transparent 70%, transparent 80%, #645ee6 80%, #645ee6 85%, transparent 85%, transparent 90%, #645ee6 90%, #645ee6 95%, transparent 95%);
+    background: radial-gradient(circle at bottom left ,#2217e8 35%, transparent 36%), radial-gradient(circle at top right ,#2217e8 35%, transparent 36%);
+        background-size: 3em 3em;
+        background-color: #151b51;
+        opacity: 0.8
     background-size: 2em 2em;
     opacity: 0.45;
     z-index: -1;
@@ -44,12 +47,13 @@ header h1 {
     font-size: 2rem;
 }
 
-/* Estilos del Formulario de Inicio de Sesión */
+
 .formulario-inicio-sesion {
     display: flex;
-    align-items: center;
+    align-items: flex-end; /* Alinea el botón al fondo de los inputs */
     gap: 1rem;
 }
+
 
 .grupo-formulario {
     display: flex;
@@ -73,13 +77,15 @@ header h1 {
 }
 
 .formulario-inicio-sesion button {
-    padding: 0.5rem 1rem;
+    height: 32px;
+    padding: 0 1rem;
     background-color: #8b86ff;
     color: #1a1a1a;
     border: none;
     border-radius: 4px;
     font-size: 0.9rem;
     cursor: pointer;
+    align-self: flex-end;
 }
 
 .formulario-inicio-sesion button:hover {
@@ -87,13 +93,17 @@ header h1 {
 }
 
 #boton-cerrar-sesion {
-    padding: 0.5rem 1rem;
+    height: 32px;
+    padding: 0 1rem;
     background-color: #8b86ff;
     color: #1a1a1a;
     border: none;
     border-radius: 4px;
+    font-size: 0.9rem;
     cursor: pointer;
+    align-self: flex-end;
 }
+
 
 #boton-cerrar-sesion:hover {
     background-color: #a29dff;

@@ -1,56 +1,56 @@
-// Función para manejar el inicio de sesión
+const usuarios = [
+    { usuario: 'x', contrasena: 'x', rol: 'lector' },
+    { usuario: 'y', contrasena: 'y', rol: 'lector' },
+    { usuario: 'z', contrasena: 'z', rol: 'escritor' }
+];
+
+function mostrarVista(rol) {
+    document.getElementById('vista-usuario-normal').style.display = 'none';
+    document.getElementById('formulario-inicio-sesion').style.display = 'none';
+    document.getElementById('contenedor-logout').style.display = 'flex';
+
+    if (rol === 'lector') {
+        document.getElementById('vista-lector').style.display = 'block';
+        document.getElementById('vista-escritor').style.display = 'none';
+    } else if (rol === 'escritor') {
+        document.getElementById('vista-lector').style.display = 'none';
+        document.getElementById('vista-escritor').style.display = 'block';
+    }
+}
+
+function cerrarSesion() {
+    document.getElementById('vista-usuario-normal').style.display = 'block';
+    document.getElementById('vista-lector').style.display = 'none';
+    document.getElementById('vista-escritor').style.display = 'none';
+    document.getElementById('formulario-inicio-sesion').style.display = 'flex';
+    document.getElementById('contenedor-logout').style.display = 'none';
+
+    document.getElementById('usuario').value = '';
+    document.getElementById('contrasena').value = '';
+    localStorage.removeItem('usuarioActivo');
+}
+
 document.getElementById('formulario-inicio-sesion').addEventListener('submit', function(event) {
-    event.preventDefault(); // Evitar que el formulario se envíe y recargue la página
+    event.preventDefault();
 
-    // Obtener los valores del usuario y contraseña
-    const usuario = document.getElementById('usuario').value;
-    const contrasena = document.getElementById('contrasena').value;
+    const usuarioInput = document.getElementById('usuario').value.trim();
+    const contrasenaInput = document.getElementById('contrasena').value.trim();
 
-    // Obtener las vistas
-    const vistaUsuarioNormal = document.getElementById('vista-usuario-normal');
-    const vistaLector = document.getElementById('vista-lector');
-    const vistaEscritor = document.getElementById('vista-escritor');
-    const formularioInicioSesion = document.getElementById('formulario-inicio-sesion');
-    const botonCerrarSesion = document.getElementById('boton-cerrar-sesion');
+    const usuarioEncontrado = usuarios.find(u => u.usuario === usuarioInput && u.contrasena === contrasenaInput);
 
-    // Verificar las credenciales
-    if (usuario === '123' && contrasena === '123') {
-        // Cambiar a la vista de lector
-        vistaUsuarioNormal.style.display = 'none';
-        vistaLector.style.display = 'block';
-        vistaEscritor.style.display = 'none';
-        formularioInicioSesion.style.display = 'none';
-        botonCerrarSesion.style.display = 'inline-block';
-    } else if (usuario === '456' && contrasena === '456') {
-        // Cambiar a la vista de escritor
-        vistaUsuarioNormal.style.display = 'none';
-        vistaLector.style.display = 'none';
-        vistaEscritor.style.display = 'block';a
-        formularioInicioSesion.style.display = 'none';
-        botonCerrarSesion.style.display = 'inline-block';
+    if (usuarioEncontrado) {
+        localStorage.setItem('usuarioActivo', JSON.stringify(usuarioEncontrado));
+        mostrarVista(usuarioEncontrado.rol);
     } else {
-        // Mostrar mensaje de error
         alert('Usuario o contraseña incorrectos. Intenta de nuevo.');
     }
 });
 
-// Función para manejar el cierre de sesión
-document.getElementById('boton-cerrar-sesion').addEventListener('click', function() {
-    // Obtener las vistas y elementos
-    const vistaUsuarioNormal = document.getElementById('vista-usuario-normal');
-    const vistaLector = document.getElementById('vista-lector');
-    const vistaEscritor = document.getElementById('vista-escritor');
-    const formularioInicioSesion = document.getElementById('formulario-inicio-sesion');
-    const botonCerrarSesion = document.getElementById('boton-cerrar-sesion');
+document.getElementById('boton-cerrar-sesion').addEventListener('click', cerrarSesion);
 
-    // Volver a la vista de usuario normal
-    vistaUsuarioNormal.style.display = 'block';
-    vistaLector.style.display = 'none';
-    vistaEscritor.style.display = 'none';
-    formularioInicioSesion.style.display = 'flex';
-    botonCerrarSesion.style.display = 'none';
-
-    // Limpiar los campos del formulario
-    document.getElementById('usuario').value = '';
-    document.getElementById('contrasena').value = '';
+window.addEventListener('DOMContentLoaded', () => {
+    const usuarioGuardado = JSON.parse(localStorage.getItem('usuarioActivo'));
+    if (usuarioGuardado) {
+        mostrarVista(usuarioGuardado.rol);
+    }
 });
