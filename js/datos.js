@@ -20,8 +20,7 @@ const ServicioDatos = {
     obtenerProductoSeleccionado: function () {
       return JSON.parse(localStorage.getItem("productoSeleccionado"));
     },
-  
-    // Científicos
+
     obtenerCientificos: function () {
       const datos = localStorage.getItem("cientificos");
       return datos ? JSON.parse(datos) : [];
@@ -41,6 +40,26 @@ const ServicioDatos = {
   
     obtenerCientificoSeleccionado: function () {
       return JSON.parse(localStorage.getItem("cientificoSeleccionado"));
-    }
+    },
+    obtenerEntidades: function () {
+        const datos = localStorage.getItem("entidades");
+        return datos ? JSON.parse(datos) : [];
+      },
+    
+      obtenerEntidadPorNombre: function (nombre) {
+        return this.obtenerEntidades().find(e => e.nombre === nombre);
+      },
+    
+      guardarEntidades: function (entidades) {
+        localStorage.setItem("entidades", JSON.stringify(entidades));
+      },
+    
+      guardarEntidadSeleccionada: function (entidad) {
+        localStorage.setItem("entidadSeleccionada", JSON.stringify(entidad));
+      },
+    
+      obtenerEntidadSeleccionada: function () {
+        return JSON.parse(localStorage.getItem("entidadSeleccionada"));
+      }
   };
   

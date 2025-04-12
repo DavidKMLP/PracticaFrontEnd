@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle de la Entidad</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Anales de la Ciencia</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main class="pagina-producto" id="detalle-entidad"></main>
+
+  <script src="js/datos.js"></script>
+  <script>
+    const entidad = ServicioDatos.obtenerEntidadSeleccionada();
+
+    if (!entidad) {
+      document.getElementById('detalle-entidad').innerHTML = "<p>Entidad no encontrada.</p>";
+    } else {
+      document.getElementById('detalle-entidad').innerHTML = `
+        <div class="contenido-producto">
+          <img src="${entidad.imagen}" alt="${entidad.nombre}" class="imagen-detalle">
+          <h2>${entidad.nombre}</h2>
+          <p><strong>Fecha de creación:</strong> ${entidad.fechaCreacion}</p>
+          <p><strong>Fecha de utilidad:</strong> ${entidad.fechaUtilidad}</p>
+          <p><strong>Wiki:</strong> <a href="${entidad.wiki}" target="_blank">Ver en Wikipedia</a></p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -51,7 +51,7 @@
                 <h2>Científicos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Cientifico1">
+                        <img src="https://via.placeholder.com/50" alt="Alan Turin">
                         <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
                     </div>
             </section>
@@ -62,7 +62,11 @@
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Logo IBM">
-                        <span>IBM</span>
+                        <a href="#" onclick="verEntidad('IBM')">IBM</a>
+                    </div>
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="Logo Nasa">
+                        <a href="#" onclick="verEntidad('NASA')">Nasa</a>
                     </div>
                 </div>
             </section>
@@ -164,6 +168,8 @@
     <script src="js/datos.js"></script>
     <script src="js/productos.js"></script>
     <script src="js/cientificos.js"></script>
+    <script src="js/entidades.js"></script>
+
     <script>
         if (ServicioDatos.obtenerProductos().length === 0) {
             ServicioDatos.guardarProductos(productos);
@@ -171,6 +177,10 @@
 
         if (ServicioDatos.obtenerCientificos().length === 0) {
             ServicioDatos.guardarCientificos(cientificos);
+        }
+
+        if (ServicioDatos.obtenerEntidades().length === 0) {
+            ServicioDatos.guardarEntidades(entidades);
         }
 
         function verProducto(nombre) {
@@ -187,6 +197,15 @@
                 window.location.href = "cientifico.html";
             }
         }
+
+        function verEntidad(nombre) {
+            const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
+            if (entidad) {
+                ServicioDatos.guardarEntidadSeleccionada(entidad);
+                window.location.href = "entidad.html";
+            }
+        }
+
     </script>
 </body>
 
