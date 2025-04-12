@@ -299,3 +299,9 @@ main {
 .elemento-datos .boton-eliminar {
     margin-left: auto;
 }
+
+a {
+    color: #8b86ff;
+    text-decoration: none;
+}
+

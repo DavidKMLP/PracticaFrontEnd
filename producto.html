@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle del Producto</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Detalle del Producto</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+  <main class="detalle-producto" id="detalle-producto">
+    <!-- Aquí se mostrará la info del producto -->
+  </main>
+
+  <script src="js/datos.js"></script>
+  <script>
+    const producto = ServicioDatos.obtenerProductoSeleccionado();
+  
+    if (!producto) {
+      document.getElementById('detalle-producto').innerHTML = "<p>Producto no encontrado.</p>";
+    } else {
+      document.getElementById('detalle-producto').innerHTML = `
+        <div class="imagen-producto">
+          <img src="${producto.imagen}" alt="${producto.nombre}">
+        </div>
+        <div class="info-producto">
+          <p><strong>Nombre:</strong> ${producto.nombre}</p>
+          <p><strong>Fecha de creación:</strong> ${producto.fechaCreacion}</p>
+          <p><strong>Vigente hasta:</strong> ${producto.fechaUtilidad}</p>
+          <p><strong>Wikipedia:</strong> <a href="${producto.wiki}" target="_blank">${producto.wiki}</a></p>
+          <p><strong>Personas involucradas:</strong></p>
+          <ul>${producto.personas.map(p => `<li>${p}</li>`).join('')}</ul>
+          <p><strong>Entidades involucradas:</strong></p>
+          <ul>${producto.entidades.map(e => `<li>${e}</li>`).join('')}</ul>
+        </div>
+      `;
+    }
+  </script>
+  
+</body>
+</html>

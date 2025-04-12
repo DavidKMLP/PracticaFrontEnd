@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anales de la Ciencia</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
     <header>
         <h1>Anales de la Ciencia</h1>
@@ -34,11 +36,12 @@
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Ícono CSS">
-                        <span>CSS</span>
+                        <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+
                     </div>
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
-                        <span>JavaScript</span>
+                        <a href="producto.html" onclick="verProducto('JavaScript'); return true;">JavaScript</a>
                     </div>
                 </div>
             </section>
@@ -158,5 +161,20 @@
     </div>
 
     <script src="js/main.js"></script>
+    <script src="js/datos.js"></script>
+    <script src="js/productos.js"></script>
+    <script>
+        if (ServicioDatos.obtenerProductos().length === 0) {
+            ServicioDatos.guardarProductos(productos);
+        }
+    
+        function verProducto(nombre) {
+            const producto = ServicioDatos.obtenerProductoPorNombre(nombre);
+            if (producto) {
+                ServicioDatos.guardarProductoSeleccionado(producto);
+            }
+        }
+    </script>
 </body>
+
 </html>
