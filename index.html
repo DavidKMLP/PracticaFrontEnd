@@ -1,211 +1,210 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anales de la Ciencia</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anales de la Ciencia</title>
+  <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
-    <header>
-        <h1>Anales de la Ciencia</h1>
-        <form id="formulario-inicio-sesion" class="formulario-inicio-sesion">
-            <div class="grupo-formulario">
-                <label for="usuario">Usuario:</label>
-                <input type="text" id="usuario" name="usuario" required>
-            </div>
-            <div class="grupo-formulario">
-                <label for="contrasena">Contraseña:</label>
-                <input type="password" id="contrasena" name="contrasena" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-        <div id="contenedor-logout" class="formulario-inicio-sesion" style="display: none;">
-            <button id="boton-cerrar-sesion">Logout</button>
+  <header>
+    <h1>Anales de la Ciencia</h1>
+    <form id="formulario-inicio-sesion" class="formulario-inicio-sesion">
+      <div class="grupo-formulario">
+        <label for="usuario">Usuario:</label>
+        <input type="text" id="usuario" name="usuario" required />
+      </div>
+      <div class="grupo-formulario">
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" required />
+      </div>
+      <button type="submit">Login</button>
+    </form>
+    <div id="contenedor-logout" class="formulario-inicio-sesion" style="display: none;">
+      <button id="boton-cerrar-sesion">Logout</button>
+    </div>
+  </header>
+
+  <!-- Vista normal -->
+  <div id="vista-usuario-normal">
+    <main>
+      <!-- Productos -->
+      <section class="seccion-datos">
+        <h2>Productos</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/cssIcon.png" alt="CSS" />
+            <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/htmlIcono.png" alt="HTML" />
+            <a href="producto.html" onclick="verProducto('HTML'); return true;">HTML</a>
+          </div>
         </div>
-    </header>
+      </section>
 
-    <!-- Vista normal -->
-    <div id="vista-usuario-normal">
-        <main>
-            <!-- Productos -->
-            <section class="seccion-datos">
-                <h2>Productos</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Ícono CSS">
-                        <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
-                    </div>
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
-                        <a href="producto.html" onclick="verProducto('JavaScript'); return true;">JavaScript</a>
-                    </div>
-                </div>
-            </section>
+      <!-- Científicos -->
+      <section class="seccion-datos">
+        <h2>Científicos</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/alanturing.png" alt="Alan Turing" />
+            <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
+          </div>
+        </div>
+      </section>
 
-            <!-- Científicos -->
-            <section class="seccion-datos">
-                <h2>Científicos</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Alan Turing">
-                        <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
-                    </div>
-                </div>
-            </section>
+      <!-- Entidades -->
+      <section class="seccion-datos">
+        <h2>Entidades</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/ibm.png" alt="IBM" />
+            <a href="#" onclick="verEntidad('IBM')">IBM</a>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/NASA.png" alt="NASA" />
+            <a href="#" onclick="verEntidad('NASA')">NASA</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-            <!-- Entidades -->
-            <section class="seccion-datos">
-                <h2>Entidades</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Logo IBM">
-                        <a href="#" onclick="verEntidad('IBM')">IBM</a>
-                    </div>
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Logo Nasa">
-                        <a href="#" onclick="verEntidad('NASA')">NASA</a>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+  <!-- Vista lector -->
+  <div id="vista-lector" style="display: none;">
+    <main>
+      <section class="seccion-datos">
+        <h2>Productos</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/cssIcon.png" alt="CSS" />
+            <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/htmlIcono.png" alt="HTML" />
+            <a href="producto.html" onclick="verProducto('HTML'); return true;">HTML</a>
+          </div>
+        </div>
+      </section>
 
-    <!-- Vista lector -->
-    <div id="vista-lector" style="display: none;">
-        <main>
-            <section class="seccion-datos">
-                <h2>Productos</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="CSS">
-                        <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
-                    </div>
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="JavaScript">
-                        <a href="producto.html" onclick="verProducto('JavaScript'); return true;">JavaScript</a>
-                    </div>
-                </div>
-            </section>
+      <section class="seccion-datos">
+        <h2>Científicos</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/alanturing.png" alt="Alan Turing" />
+            <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
+          </div>
+        </div>
+      </section>
 
-            <section class="seccion-datos">
-                <h2>Científicos</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Alan Turing">
-                        <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
-                    </div>
-                </div>
-            </section>
+      <section class="seccion-datos">
+        <h2>Entidades</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/ibm.png" alt="IBM" />
+            <a href="#" onclick="verEntidad('IBM')">IBM</a>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/NASA.png" alt="NASA" />
+            <a href="#" onclick="verEntidad('NASA')">NASA</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-            <section class="seccion-datos">
-                <h2>Entidades</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="IBM">
-                        <a href="#" onclick="verEntidad('IBM')">IBM</a>
-                    </div>
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="NASA">
-                        <a href="#" onclick="verEntidad('NASA')">NASA</a>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+  <!-- Vista escritor -->
+  <div id="vista-escritor" style="display: none;">
+    <main>
+      <section class="seccion-datos">
+        <h2>Productos</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/cssIcon.png" alt="CSS" />
+            <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+            <button class="boton-eliminar">delete</button>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/htmlIcono.png" alt="HTML" />
+            <a href="producto.html" onclick="verProducto('HTML'); return true;">HTML</a>
+            <button class="boton-eliminar">delete</button>
+          </div>
+        </div>
+        <button class="boton-crear">create</button>
+      </section>
 
-    <!-- Vista escritor -->
-    <div id="vista-escritor" style="display: none;">
-        <main>
-            <section class="seccion-datos">
-                <h2>Productos</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="CSS">
-                        <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
-                        <button class="boton-eliminar">delete</button>
-                    </div>
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="JavaScript">
-                        <a href="producto.html" onclick="verProducto('JavaScript'); return true;">JavaScript</a>
-                        <button class="boton-eliminar">delete</button>
-                    </div>
-                </div>
-                <button class="boton-crear">create</button>
-            </section>
+      <section class="seccion-datos">
+        <h2>Científicos</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/alanturing.png" alt="Alan Turing" />
+            <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
+            <button class="boton-eliminar">delete</button>
+          </div>
+        </div>
+        <button class="boton-crear">create</button>
+      </section>
 
-            <section class="seccion-datos">
-                <h2>Científicos</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Alan Turing">
-                        <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
-                        <button class="boton-eliminar">delete</button>
-                    </div>
-                </div>
-                <button class="boton-crear">create</button>
-            </section>
+      <section class="seccion-datos">
+        <h2>Entidades</h2>
+        <div class="cuadricula-datos">
+          <div class="elemento-datos">
+            <img src="img/ibm.png" alt="IBM" />
+            <a href="#" onclick="verEntidad('IBM')">IBM</a>
+            <button class="boton-eliminar">delete</button>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/NASA.png" alt="NASA" />
+            <a href="#" onclick="verEntidad('NASA')">NASA</a>
+            <button class="boton-eliminar">delete</button>
+          </div>
+        </div>
+        <button class="boton-crear">create</button>
+      </section>
+    </main>
+  </div>
 
-            <section class="seccion-datos">
-                <h2>Entidades</h2>
-                <div class="cuadricula-datos">
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="IBM">
-                        <a href="#" onclick="verEntidad('IBM')">IBM</a>
-                        <button class="boton-eliminar">delete</button>
-                    </div>
-                    <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="NASA">
-                        <a href="#" onclick="verEntidad('NASA')">NASA</a>
-                        <button class="boton-eliminar">delete</button>
-                    </div>
-                </div>
-                <button class="boton-crear">create</button>
-            </section>
-        </main>
-    </div>
+  <script src="js/main.js"></script>
+  <script src="js/datos.js"></script>
+  <script src="js/productos.js"></script>
+  <script src="js/cientificos.js"></script>
+  <script src="js/entidades.js"></script>
+  <script>
+    if (ServicioDatos.obtenerProductos().length === 0) {
+      ServicioDatos.guardarProductos(productos);
+    }
 
-    <script src="js/main.js"></script>
-    <script src="js/datos.js"></script>
-    <script src="js/productos.js"></script>
-    <script src="js/cientificos.js"></script>
-    <script src="js/entidades.js"></script>
+    if (ServicioDatos.obtenerCientificos().length === 0) {
+      ServicioDatos.guardarCientificos(cientificos);
+    }
 
-    <script>
-        if (ServicioDatos.obtenerProductos().length === 0) {
-            ServicioDatos.guardarProductos(productos);
-        }
+    if (ServicioDatos.obtenerEntidades().length === 0) {
+      ServicioDatos.guardarEntidades(entidades);
+    }
 
-        if (ServicioDatos.obtenerCientificos().length === 0) {
-            ServicioDatos.guardarCientificos(cientificos);
-        }
+    function verProducto(nombre) {
+      const producto = ServicioDatos.obtenerProductoPorNombre(nombre);
+      if (producto) {
+        ServicioDatos.guardarProductoSeleccionado(producto);
+      }
+    }
 
-        if (ServicioDatos.obtenerEntidades().length === 0) {
-            ServicioDatos.guardarEntidades(entidades);
-        }
+    function verCientifico(nombre) {
+      const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
+      if (cientifico) {
+        ServicioDatos.guardarCientificoSeleccionado(cientifico);
+        window.location.href = "cientifico.html";
+      }
+    }
 
-        function verProducto(nombre) {
-            const producto = ServicioDatos.obtenerProductoPorNombre(nombre);
-            if (producto) {
-                ServicioDatos.guardarProductoSeleccionado(producto);
-            }
-        }
-
-        function verCientifico(nombre) {
-            const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
-            if (cientifico) {
-                ServicioDatos.guardarCientificoSeleccionado(cientifico);
-                window.location.href = "cientifico.html";
-            }
-        }
-
-        function verEntidad(nombre) {
-            const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
-            if (entidad) {
-                ServicioDatos.guardarEntidadSeleccionada(entidad);
-                window.location.href = "entidad.html";
-            }
-        }
-    </script>
+    function verEntidad(nombre) {
+      const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
+      if (entidad) {
+        ServicioDatos.guardarEntidadSeleccionada(entidad);
+        window.location.href = "entidad.html";
+      }
+    }
+  </script>
 </body>
 </html>
