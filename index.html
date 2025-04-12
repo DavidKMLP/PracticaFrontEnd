@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anales de la Ciencia</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
     <header>
         <h1>Anales de la Ciencia</h1>
@@ -30,14 +28,13 @@
     <!-- Vista normal -->
     <div id="vista-usuario-normal">
         <main>
-            <!-- Sección de Inventos -->
+            <!-- Productos -->
             <section class="seccion-datos">
                 <h2>Productos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Ícono CSS">
                         <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
-
                     </div>
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
@@ -46,17 +43,18 @@
                 </div>
             </section>
 
-            <!-- Sección de Científicos -->
+            <!-- Científicos -->
             <section class="seccion-datos">
                 <h2>Científicos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Alan Turin">
+                        <img src="https://via.placeholder.com/50" alt="Alan Turing">
                         <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
                     </div>
+                </div>
             </section>
 
-            <!-- Sección de Entidades -->
+            <!-- Entidades -->
             <section class="seccion-datos">
                 <h2>Entidades</h2>
                 <div class="cuadricula-datos">
@@ -66,96 +64,99 @@
                     </div>
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Logo Nasa">
-                        <a href="#" onclick="verEntidad('NASA')">Nasa</a>
+                        <a href="#" onclick="verEntidad('NASA')">NASA</a>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Vista de Lector -->
+    <!-- Vista lector -->
     <div id="vista-lector" style="display: none;">
         <main>
-            <!-- Sección de Inventos -->
             <section class="seccion-datos">
                 <h2>Productos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Ícono CSS">
-                        <span>CSS</span>
+                        <img src="https://via.placeholder.com/50" alt="CSS">
+                        <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
                     </div>
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
-                        <span>JavaScript</span>
+                        <img src="https://via.placeholder.com/50" alt="JavaScript">
+                        <a href="producto.html" onclick="verProducto('JavaScript'); return true;">JavaScript</a>
                     </div>
                 </div>
             </section>
 
-            <!-- Sección de Científicos -->
             <section class="seccion-datos">
                 <h2>Científicos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Cientifico1">
-                        <span>Cientifico1</span>
+                        <img src="https://via.placeholder.com/50" alt="Alan Turing">
+                        <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
                     </div>
                 </div>
             </section>
 
-            <!-- Sección de Entidades -->
             <section class="seccion-datos">
                 <h2>Entidades</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Logo IBM">
-                        <span>IBM</span>
+                        <img src="https://via.placeholder.com/50" alt="IBM">
+                        <a href="#" onclick="verEntidad('IBM')">IBM</a>
+                    </div>
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="NASA">
+                        <a href="#" onclick="verEntidad('NASA')">NASA</a>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Vista de Escritor -->
+    <!-- Vista escritor -->
     <div id="vista-escritor" style="display: none;">
         <main>
-            <!-- Sección de Inventos -->
             <section class="seccion-datos">
                 <h2>Productos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Ícono CSS">
-                        <span>CSS</span>
+                        <img src="https://via.placeholder.com/50" alt="CSS">
+                        <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
                         <button class="boton-eliminar">delete</button>
                     </div>
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Ícono JavaScript">
-                        <span>JavaScript</span>
+                        <img src="https://via.placeholder.com/50" alt="JavaScript">
+                        <a href="producto.html" onclick="verProducto('JavaScript'); return true;">JavaScript</a>
                         <button class="boton-eliminar">delete</button>
                     </div>
                 </div>
                 <button class="boton-crear">create</button>
             </section>
 
-            <!-- Sección de Científicos -->
             <section class="seccion-datos">
                 <h2>Científicos</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Cientifico1">
-                        <span>Cientifico1</span>
+                        <img src="https://via.placeholder.com/50" alt="Alan Turing">
+                        <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
                         <button class="boton-eliminar">delete</button>
                     </div>
                 </div>
                 <button class="boton-crear">create</button>
             </section>
 
-            <!-- Sección de Entidades -->
             <section class="seccion-datos">
                 <h2>Entidades</h2>
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
-                        <img src="https://via.placeholder.com/50" alt="Logo IBM">
-                        <span>IBM</span>
+                        <img src="https://via.placeholder.com/50" alt="IBM">
+                        <a href="#" onclick="verEntidad('IBM')">IBM</a>
+                        <button class="boton-eliminar">delete</button>
+                    </div>
+                    <div class="elemento-datos">
+                        <img src="https://via.placeholder.com/50" alt="NASA">
+                        <a href="#" onclick="verEntidad('NASA')">NASA</a>
                         <button class="boton-eliminar">delete</button>
                     </div>
                 </div>
@@ -205,8 +206,6 @@
                 window.location.href = "entidad.html";
             }
         }
-
     </script>
 </body>
-
 </html>
