@@ -52,7 +52,7 @@
                 <div class="cuadricula-datos">
                     <div class="elemento-datos">
                         <img src="https://via.placeholder.com/50" alt="Cientifico1">
-                        <span>Cientifico1</span>
+                        <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
                     </div>
             </section>
 
@@ -163,15 +163,28 @@
     <script src="js/main.js"></script>
     <script src="js/datos.js"></script>
     <script src="js/productos.js"></script>
+    <script src="js/cientificos.js"></script>
     <script>
         if (ServicioDatos.obtenerProductos().length === 0) {
             ServicioDatos.guardarProductos(productos);
         }
-    
+
+        if (ServicioDatos.obtenerCientificos().length === 0) {
+            ServicioDatos.guardarCientificos(cientificos);
+        }
+
         function verProducto(nombre) {
             const producto = ServicioDatos.obtenerProductoPorNombre(nombre);
             if (producto) {
                 ServicioDatos.guardarProductoSeleccionado(producto);
+            }
+        }
+
+        function verCientifico(nombre) {
+            const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
+            if (cientifico) {
+                ServicioDatos.guardarCientificoSeleccionado(cientifico);
+                window.location.href = "cientifico.html";
             }
         }
     </script>

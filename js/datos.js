@@ -1,4 +1,5 @@
 const ServicioDatos = {
+    // Productos
     obtenerProductos: function () {
       const datos = localStorage.getItem("productos");
       return datos ? JSON.parse(datos) : [];
@@ -18,6 +19,28 @@ const ServicioDatos = {
   
     obtenerProductoSeleccionado: function () {
       return JSON.parse(localStorage.getItem("productoSeleccionado"));
+    },
+  
+    // Científicos
+    obtenerCientificos: function () {
+      const datos = localStorage.getItem("cientificos");
+      return datos ? JSON.parse(datos) : [];
+    },
+  
+    obtenerCientificoPorNombre: function (nombre) {
+      return this.obtenerCientificos().find(c => c.nombre === nombre);
+    },
+  
+    guardarCientificos: function (cientificos) {
+      localStorage.setItem("cientificos", JSON.stringify(cientificos));
+    },
+  
+    guardarCientificoSeleccionado: function (cientifico) {
+      localStorage.setItem("cientificoSeleccionado", JSON.stringify(cientifico));
+    },
+  
+    obtenerCientificoSeleccionado: function () {
+      return JSON.parse(localStorage.getItem("cientificoSeleccionado"));
     }
   };
   

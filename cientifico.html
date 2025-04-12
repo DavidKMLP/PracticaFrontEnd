@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle del Científico</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Anales de la Ciencia</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main class="pagina-producto" id="detalle-cientifico"></main>
+
+  <script src="js/datos.js"></script>
+  <script>
+    const cientifico = ServicioDatos.obtenerCientificoSeleccionado();
+
+    if (!cientifico) {
+      document.getElementById('detalle-cientifico').innerHTML = "<p>Científico no encontrado.</p>";
+    } else {
+      document.getElementById('detalle-cientifico').innerHTML = `
+        <div class="contenido-producto">
+          <img src="${cientifico.imagen}" alt="${cientifico.nombre}" class="imagen-detalle">
+          <h2>${cientifico.nombre}</h2>
+          <p><strong>Fecha de nacimiento:</strong> ${cientifico.fechaCreacion}</p>
+          <p><strong>Fecha de fallecimiento:</strong> ${cientifico.fechaUtilidad}</p>
+          <p><strong>Wiki:</strong> <a href="${cientifico.wiki}" target="_blank">Ver en Wikipedia</a></p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
