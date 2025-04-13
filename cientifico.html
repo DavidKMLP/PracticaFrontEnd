@@ -27,8 +27,32 @@
           <p><strong>Fecha de nacimiento:</strong> ${cientifico.fechaCreacion}</p>
           <p><strong>Fecha de fallecimiento:</strong> ${cientifico.fechaUtilidad}</p>
           <p><strong>Wiki:</strong> <a href="${cientifico.wiki}" target="_blank">Ver en Wikipedia</a></p>
+
+          <section class="seccion-datos" id="entidades-relacionadas">
+            <h3>Entidades relacionadas</h3>
+            <div class="cuadricula-datos"></div>
+          </section>
         </div>
       `;
+
+      const contenedorEntidades = document.querySelector('#entidades-relacionadas .cuadricula-datos');
+
+      if (cientifico.entidades && cientifico.entidades.length > 0) {
+        cientifico.entidades.forEach(nombre => {
+          const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
+          if (entidad) {
+            const div = document.createElement('div');
+            div.className = 'elemento-datos';
+            div.innerHTML = `
+              <img src="${entidad.imagen}" alt="${entidad.nombre}">
+              <a href="entidad.html" onclick="verEntidad('${entidad.nombre}')">${entidad.nombre}</a>
+            `;
+            contenedorEntidades.appendChild(div);
+          }
+        });
+      } else {
+        contenedorEntidades.innerHTML = "<p>No hay entidades relacionadas con este científico.</p>";
+      }
     }
   </script>
 </body>
