@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Detalle de la Entidad</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
   <header>
     <h1>Anales de la Ciencia</h1>
@@ -22,7 +24,7 @@
     } else {
       document.getElementById('detalle-entidad').innerHTML = `
         <div class="contenido-producto">
-          <img src="${entidad.imagen}" alt="${entidad.nombre}" class="imagen-detalle">
+<img src="${entidad.imagen}" alt="${entidad.nombre}" class="imagen-detalle">
           <h2>${entidad.nombre}</h2>
           <p><strong>Fecha de creación:</strong> ${entidad.fechaCreacion}</p>
           <p><strong>Fecha de utilidad:</strong> ${entidad.fechaUtilidad}</p>
@@ -32,4 +34,5 @@
     }
   </script>
 </body>
+
 </html>
