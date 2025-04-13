@@ -209,12 +209,13 @@
     }
 
     function verCientifico(nombre) {
-      const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
-      if (cientifico) {
-        ServicioDatos.guardarCientificoSeleccionado(cientifico);
-        window.location.href = "cientifico.html";
-      }
-    }
+  const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
+  if (cientifico) {
+    ServicioDatos.guardarCientificoSeleccionado(cientifico);
+    window.location.href = "cientifico.html";
+  }
+}
+
 
     function verEntidad(nombre) {
       const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
