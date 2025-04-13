@@ -1,11 +1,16 @@
 const cientificos = [
   {
-    nombre: "Alan Turing",
-    fechaCreacion: "23 de junio de 1912",
-    fechaUtilidad: "7 de junio de 1954",
-    imagen: "img/alanturing.png",
-    wiki: "https://es.wikipedia.org/wiki/Alan_Turing"
+    nombre: "Vannevar Bush",
+    fechaCreacion: "11 de marzo de 1890",
+    fechaUtilidad: "30 de junio de 1974",
+    imagen: "img/vannevar.png",
+    wiki: "https://es.wikipedia.org/wiki/Vannevar_Bush"
+  },
+  {
+    nombre: "Tim Berners-Lee",
+    fechaCreacion: "8 de junio de 1955",
+    fechaUtilidad: "Actualidad",
+    imagen: "img/tim.png",
+    wiki: "https://es.wikipedia.org/wiki/Tim_Berners-Lee"
   }
 ];
-
-  

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anales de la Ciencia</title>
-  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Anales de la Ciencia</h1>
@@ -25,7 +27,7 @@
     </div>
   </header>
 
-  <!-- Vista normal -->
+  <!-- Vista Usuario Normal -->
   <div id="vista-usuario-normal">
     <main>
       <!-- Productos -->
@@ -34,11 +36,11 @@
         <div class="cuadricula-datos">
           <div class="elemento-datos">
             <img src="img/cssIcon.png" alt="CSS" />
-            <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+            <a href="producto.html" onclick="verProducto('CSS')">CSS</a>
           </div>
           <div class="elemento-datos">
             <img src="img/htmlIcono.png" alt="HTML" />
-            <a href="producto.html" onclick="verProducto('HTML'); return true;">HTML</a>
+            <a href="producto.html" onclick="verProducto('HTML')">HTML</a>
           </div>
         </div>
       </section>
@@ -48,8 +50,12 @@
         <h2>Científicos</h2>
         <div class="cuadricula-datos">
           <div class="elemento-datos">
-            <img src="img/alanturing.png" alt="Alan Turing" />
-            <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
+            <img src="img/vannevar.png" alt="Vannevar Bush" />
+            <a href="#" onclick="verCientifico('Vannevar Bush')">Vannevar Bush</a>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/tim.png" alt="Tim Berners-Lee" />
+            <a href="#" onclick="verCientifico('Tim Berners-Lee')">Tim Berners-Lee</a>
           </div>
         </div>
       </section>
@@ -63,41 +69,47 @@
             <a href="#" onclick="verEntidad('IBM')">IBM</a>
           </div>
           <div class="elemento-datos">
-            <img src="img/NASA.png" alt="NASA" />
-            <a href="#" onclick="verEntidad('NASA')">NASA</a>
+            <img src="img/w3c.png" alt="W3C" />
+            <a href="#" onclick="verEntidad('W3C')">W3C</a>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- Vista lector -->
+  <!-- Vista Lector -->
   <div id="vista-lector" style="display: none;">
     <main>
+      <!-- Productos -->
       <section class="seccion-datos">
         <h2>Productos</h2>
         <div class="cuadricula-datos">
           <div class="elemento-datos">
             <img src="img/cssIcon.png" alt="CSS" />
-            <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+            <a href="producto.html" onclick="verProducto('CSS')">CSS</a>
           </div>
           <div class="elemento-datos">
             <img src="img/htmlIcono.png" alt="HTML" />
-            <a href="producto.html" onclick="verProducto('HTML'); return true;">HTML</a>
-          </div>
+            <a href="producto.html" onclick="verProducto('HTML')">HTML</a>          </div>
         </div>
       </section>
 
+      <!-- Científicos -->
       <section class="seccion-datos">
         <h2>Científicos</h2>
         <div class="cuadricula-datos">
           <div class="elemento-datos">
-            <img src="img/alanturing.png" alt="Alan Turing" />
-            <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
+            <img src="img/vannevar.png" alt="Vannevar Bush" />
+            <a href="#" onclick="verCientifico('Vannevar Bush')">Vannevar Bush</a>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/tim.png" alt="Tim Berners-Lee" />
+            <a href="#" onclick="verCientifico('Tim Berners-Lee')">Tim Berners-Lee</a>
           </div>
         </div>
       </section>
 
+      <!-- Entidades -->
       <section class="seccion-datos">
         <h2>Entidades</h2>
         <div class="cuadricula-datos">
@@ -106,46 +118,53 @@
             <a href="#" onclick="verEntidad('IBM')">IBM</a>
           </div>
           <div class="elemento-datos">
-            <img src="img/NASA.png" alt="NASA" />
-            <a href="#" onclick="verEntidad('NASA')">NASA</a>
+            <img src="img/w3c.png" alt="W3C" />
+            <a href="#" onclick="verEntidad('W3C')">W3C</a>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- Vista escritor -->
+  <!-- Vista Escritor -->
   <div id="vista-escritor" style="display: none;">
     <main>
+      <!-- Productos -->
       <section class="seccion-datos">
         <h2>Productos</h2>
         <div class="cuadricula-datos">
           <div class="elemento-datos">
             <img src="img/cssIcon.png" alt="CSS" />
-            <a href="producto.html" onclick="verProducto('CSS'); return true;">CSS</a>
+            <a href="producto.html" onclick="verProducto('CSS')">CSS</a>
             <button class="boton-eliminar">delete</button>
           </div>
           <div class="elemento-datos">
             <img src="img/htmlIcono.png" alt="HTML" />
-            <a href="producto.html" onclick="verProducto('HTML'); return true;">HTML</a>
-            <button class="boton-eliminar">delete</button>
+            <a href="producto.html" onclick="verProducto('HTML')">HTML</a>            <button class="boton-eliminar">delete</button>
           </div>
         </div>
         <button class="boton-crear">create</button>
       </section>
 
+      <!-- Científicos -->
       <section class="seccion-datos">
         <h2>Científicos</h2>
         <div class="cuadricula-datos">
           <div class="elemento-datos">
-            <img src="img/alanturing.png" alt="Alan Turing" />
-            <a href="#" onclick="verCientifico('Alan Turing')">Alan Turing</a>
+            <img src="img/vannevar.png" alt="Vannevar Bush" />
+            <a href="#" onclick="verCientifico('Vannevar Bush')">Vannevar Bush</a>
+            <button class="boton-eliminar">delete</button>
+          </div>
+          <div class="elemento-datos">
+            <img src="img/tim.png" alt="Tim Berners-Lee" />
+            <a href="#" onclick="verCientifico('Tim Berners-Lee')">Tim Berners-Lee</a>
             <button class="boton-eliminar">delete</button>
           </div>
         </div>
         <button class="boton-crear">create</button>
       </section>
 
+      <!-- Entidades -->
       <section class="seccion-datos">
         <h2>Entidades</h2>
         <div class="cuadricula-datos">
@@ -155,8 +174,8 @@
             <button class="boton-eliminar">delete</button>
           </div>
           <div class="elemento-datos">
-            <img src="img/NASA.png" alt="NASA" />
-            <a href="#" onclick="verEntidad('NASA')">NASA</a>
+            <img src="img/w3c.png" alt="W3C" />
+            <a href="#" onclick="verEntidad('W3C')">W3C</a>
             <button class="boton-eliminar">delete</button>
           </div>
         </div>
@@ -170,16 +189,15 @@
   <script src="js/productos.js"></script>
   <script src="js/cientificos.js"></script>
   <script src="js/entidades.js"></script>
+
   <script>
-    if (ServicioDatos.obtenerProductos().length === 0) {
+    if (!localStorage.getItem("productos")) {
       ServicioDatos.guardarProductos(productos);
     }
-
-    if (ServicioDatos.obtenerCientificos().length === 0) {
+    if (!localStorage.getItem("cientificos")) {
       ServicioDatos.guardarCientificos(cientificos);
     }
-
-    if (ServicioDatos.obtenerEntidades().length === 0) {
+    if (!localStorage.getItem("entidades")) {
       ServicioDatos.guardarEntidades(entidades);
     }
 
@@ -207,4 +225,5 @@
     }
   </script>
 </body>
+
 </html>

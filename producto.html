@@ -1,40 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Detalle del Producto</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8" />
+  <title>Detalle del Producto</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-
 <body>
-    <header>
-        <h1>Anales de la Ciencia</h1>
-        <a href="index.html" class="boton-volver">← Volver</a>
-    </header>
+  <header>
+    <h1>Anales de la Ciencia</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
 
-    <main class="pagina-producto" id="detalle-producto">
-    </main>
+  <main class="pagina-producto" id="detalle-producto">
+    <!-- Aquí se inyectará el producto dinámicamente -->
+  </main>
 
-    <script src="js/datos.js"></script>
-    <script>
-        const producto = ServicioDatos.obtenerProductoSeleccionado();
+  <script src="js/datos.js"></script>
+  <script>
+    const producto = ServicioDatos.obtenerProductoSeleccionado();
 
-        if (!producto) {
-            document.getElementById('detalle-producto').innerHTML = "<p>Producto no encontrado.</p>";
-        } else {
-            document.getElementById('detalle-producto').innerHTML = `
-  <div class="contenido-producto">
-    <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-detalle">
-    <h2>${producto.nombre}</h2>
-    <p><strong>Fecha de creación:</strong> ${producto.fechaCreacion}</p>
-    <p><strong>Fecha de utilidad:</strong> ${producto.fechaUtilidad}</p>
-    <p><strong>Wiki:</strong> <a href="${producto.wiki}" target="_blank">Ver en Wikipedia</a></p>
-  </div>
-`;
+    if (!producto) {
+      document.getElementById('detalle-producto').innerHTML = "<p>Producto no encontrado.</p>";
+    } else {
+      document.getElementById('detalle-producto').innerHTML = `
+        <div class="contenido-producto">
+          <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-detalle" />
+          <h2>${producto.nombre}</h2>
+          <p><strong>Fecha de creación:</strong> ${producto.fechaCreacion}</p>
+          <p><strong>Fecha de utilidad:</strong> ${producto.fechaUtilidad}</p>
+          <p><strong>Wiki:</strong> <a href="${producto.wiki}" target="_blank">Ver en Wikipedia</a></p>
 
-        }
-    </script>
+          <section class="seccion-datos" id="cientificos-relacionados">
+            <h3>Científicos relacionados</h3>
+            <div class="cuadricula-datos"></div>
+          </section>
+        </div>
+      `;
+
+      const contenedorCientificos = document.querySelector('#cientificos-relacionados .cuadricula-datos');
+
+      if (producto.personas && producto.personas.length > 0) {
+        producto.personas.forEach(nombre => {
+          const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
+          if (cientifico) {
+            const div = document.createElement('div');
+            div.className = 'elemento-datos';
+            div.innerHTML = `
+              <img src="${cientifico.imagen}" alt="${cientifico.nombre}">
+              <a href="cientifico.html" onclick="verCientifico('${cientifico.nombre}')">${cientifico.nombre}</a>
+            `;
+            contenedorCientificos.appendChild(div);
+          }
+        });
+      } else {
+        contenedorCientificos.innerHTML = "<p>No hay científicos relacionados con este producto.</p>";
+      }
+    }
+  </script>
 </body>
-
 </html>
