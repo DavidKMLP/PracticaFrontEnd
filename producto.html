@@ -11,11 +11,10 @@
     <a href="index.html" class="boton-volver">← Volver</a>
   </header>
 
-  <main class="pagina-producto" id="detalle-producto">
-    <!-- Aquí se inyectará el producto dinámicamente -->
-  </main>
+  <main class="pagina-producto" id="detalle-producto"></main>
 
   <script src="js/datos.js"></script>
+  <script src="js/navegacion.js"></script>
   <script>
     const producto = ServicioDatos.obtenerProductoSeleccionado();
 
@@ -23,40 +22,76 @@
       document.getElementById('detalle-producto').innerHTML = "<p>Producto no encontrado.</p>";
     } else {
       document.getElementById('detalle-producto').innerHTML = `
-        <div class="contenido-producto">
-          <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-detalle" />
-          <h2>${producto.nombre}</h2>
-          <p><strong>Fecha de creación:</strong> ${producto.fechaCreacion}</p>
-          <p><strong>Fecha de utilidad:</strong> ${producto.fechaUtilidad}</p>
-          <p><strong>Wiki:</strong> <a href="${producto.wiki}" target="_blank">Ver en Wikipedia</a></p>
+        <header class="cabecera-wiki">
+          <h1 class="titulo-wiki">${producto.nombre}</h1>
+          <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-wiki" />
+        </header>
 
-          <section class="seccion-datos" id="cientificos-relacionados">
-            <h3>Científicos relacionados</h3>
-            <div class="cuadricula-datos"></div>
-          </section>
-        </div>
+        <section class="descripcion-wiki">
+          <p class="intro-wiki">${producto.intro}</p>
+        </section>
+
+        <section class="datos-wiki">
+          <table>
+            <tr><th>Fecha de creación</th><td>${producto.fechaCreacion}</td></tr>
+            <tr><th>Fecha de utilidad</th><td>${producto.fechaUtilidad}</td></tr>
+            <tr><th>Wiki</th><td><a href="${producto.wiki}" target="_blank">Ver en Wikipedia</a></td></tr>
+          </table>
+        </section>
+
+        <section class="relaciones-wiki">
+          <h3>Personas relacionadas</h3>
+          <div class="cuadricula-datos" id="personas-relacionadas"></div>
+        </section>
+
+        <section class="relaciones-wiki">
+          <h3>Entidades relacionadas</h3>
+          <div class="cuadricula-datos" id="entidades-relacionadas"></div>
+        </section>
       `;
 
-      const contenedorCientificos = document.querySelector('#cientificos-relacionados .cuadricula-datos');
+      // Personas relacionadas
+      const cientificos = ServicioDatos.obtenerCientificos();
+      const contPersonas = document.getElementById('personas-relacionadas');
 
-      if (producto.personas && producto.personas.length > 0) {
+      if (producto.personas?.length > 0) {
         producto.personas.forEach(nombre => {
-          const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
+          const cientifico = cientificos.find(c => c.nombre === nombre);
           if (cientifico) {
             const div = document.createElement('div');
             div.className = 'elemento-datos';
             div.innerHTML = `
               <img src="${cientifico.imagen}" alt="${cientifico.nombre}">
-              <a href="cientifico.html" onclick="verCientifico('${cientifico.nombre}')">${cientifico.nombre}</a>
+              <a href="#" onclick="verCientifico('${cientifico.nombre}')">${cientifico.nombre}</a>
             `;
-            contenedorCientificos.appendChild(div);
+            contPersonas.appendChild(div);
           }
         });
       } else {
-        contenedorCientificos.innerHTML = "<p>No hay científicos relacionados con este producto.</p>";
+        contPersonas.innerHTML = "<p>No hay personas relacionadas con este producto.</p>";
+      }
+
+      // Entidades relacionadas
+      const entidades = ServicioDatos.obtenerEntidades();
+      const contEntidades = document.getElementById('entidades-relacionadas');
+
+      if (producto.entidades?.length > 0) {
+        producto.entidades.forEach(nombre => {
+          const entidad = entidades.find(e => e.nombre === nombre);
+          if (entidad) {
+            const div = document.createElement('div');
+            div.className = 'elemento-datos';
+            div.innerHTML = `
+              <img src="${entidad.imagen}" alt="${entidad.nombre}">
+              <a href="#" onclick="verEntidad('${entidad.nombre}')">${entidad.nombre}</a>
+            `;
+            contEntidades.appendChild(div);
+          }
+        });
+      } else {
+        contEntidades.innerHTML = "<p>No hay entidades relacionadas con este producto.</p>";
       }
     }
   </script>
-  <script src="js/navegacion.js"></script>
 </body>
 </html>

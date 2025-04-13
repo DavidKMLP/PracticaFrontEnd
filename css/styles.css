@@ -338,4 +338,63 @@ a {
     color: #8b86ff;
     text-decoration: none;
 }
-
+.pagina-wiki {
+    max-width: 900px;
+    margin: auto;
+    background: #1f2e2e;
+    padding: 2rem;
+  }
+  
+  .cabecera-wiki {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .imagen-wiki {
+    width: 120px;
+    height: auto;
+    border: 2px solid white;
+    border-radius: 6px;
+  }
+  
+  .titulo-wiki {
+    font-size: 2rem;
+    color: #8c8cff;
+  }
+  
+  .descripcion-wiki {
+    margin-top: 1rem;
+  }
+  
+  .intro-wiki {
+    font-style: italic;
+    color: #ccc;
+  }
+  
+  .datos-wiki table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+  }
+  
+  .datos-wiki th, .datos-wiki td {
+    border: 1px solid #888;
+    padding: 0.5rem;
+    text-align: left;
+  }
+  
+  .datos-wiki th {
+    background: #333;
+    color: #fff;
+  }
+  
+  .relaciones-wiki {
+    margin-top: 2rem;
+  }
+  .relaciones-wiki h3 {
+    margin-top: 2rem;
+    color: #8c8cff;
+  }
+  
+  
