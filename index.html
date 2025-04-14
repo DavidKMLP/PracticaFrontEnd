@@ -145,7 +145,7 @@
               class="boton-eliminar">delete</button>
           </div>
         </div>
-        <button class="boton-crear">create</button>
+        <a href="crear-producto.html" class="boton-crear">create</a>
       </section>
 
       <!-- Científicos -->
@@ -226,6 +226,11 @@
         window.location.href = "entidad.html";
       }
     }
+
+    if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
+      window.location.reload();
+    }
+
   </script>
 </body>
 

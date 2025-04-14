@@ -6,6 +6,7 @@ const cientificos = [
     imagen: "img/vannevar.png",
     wiki: "https://es.wikipedia.org/wiki/Vannevar_Bush",
     entidades: ["IBM"],
+    intro: "Prueba"
   },
   {
     nombre: "Tim Berners-Lee",
