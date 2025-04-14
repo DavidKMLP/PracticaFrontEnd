@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crear Científico</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Crear Científico</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main>
+    <form id="formulario-crear-cientifico" class="formulario">
+      <label>Nombre: <input type="text" name="nombre" required /></label>
+      <label>Fecha de nacimiento: <input type="text" name="fechaCreacion" required /></label>
+      <label>Fecha de fallecimiento: <input type="text" name="fechaUtilidad" required /></label>
+      <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
+      <label>Introducción:
+        <textarea name="intro" rows="4" placeholder="Breve descripción..."></textarea>
+      </label>
+      <label>Entidades relacionadas (separadas por coma): <input type="text" name="entidades" /></label>
+      <label>Imagen (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg, .jpeg, .png" /></label>
+      <button type="submit">Guardar Científico</button>
+    </form>
+  </main>
+
+  <script src="js/datosCentralizados.js"></script>
+  <script>
+    const formulario = document.getElementById("formulario-crear-cientifico");
+
+    formulario.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(formulario);
+      const archivoImagen = formData.get("imagen");
+
+      const guardar = (imagen = "") => {
+        const nuevo = {
+          nombre: formData.get("nombre"),
+          fechaCreacion: formData.get("fechaCreacion"),
+          fechaUtilidad: formData.get("fechaUtilidad"),
+          wiki: formData.get("wiki"),
+          intro: formData.get("intro"),
+          imagen,
+          entidades: formData.get("entidades")?.split(',').map(e => e.trim()).filter(Boolean) || []
+        };
+
+        DatosApp.guardarCientifico(nuevo).then(() => {
+          alert("Científico guardado correctamente.");
+          window.location.href = "index.html";
+        });
+      };
+
+      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => guardar(reader.result);
+        reader.readAsDataURL(archivoImagen);
+      } else {
+        guardar();
+      }
+    });
+  </script>
+</body>
+</html>

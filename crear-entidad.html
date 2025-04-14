@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crear Entidad</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Crear Entidad</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main>
+    <form id="formulario-crear-entidad" class="formulario">
+      <label>Nombre: <input type="text" name="nombre" required /></label>
+      <label>Fecha de creación: <input type="text" name="fechaCreacion" required /></label>
+      <label>Fecha de utilidad: <input type="text" name="fechaUtilidad" required /></label>
+      <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
+      <label>Introducción:
+        <textarea name="intro" rows="4" placeholder="Breve descripción..."></textarea>
+      </label>
+      <label>Científicos relacionados (separados por coma): <input type="text" name="cientificos" /></label>
+      <label>Imagen (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg, .jpeg, .png" /></label>
+      <button type="submit">Guardar Entidad</button>
+    </form>
+  </main>
+
+  <script src="js/datosCentralizados.js"></script>
+  <script>
+    const formulario = document.getElementById("formulario-crear-entidad");
+
+    formulario.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(formulario);
+      const archivoImagen = formData.get("imagen");
+
+      const guardar = (imagen = "") => {
+        const nueva = {
+          nombre: formData.get("nombre"),
+          fechaCreacion: formData.get("fechaCreacion"),
+          fechaUtilidad: formData.get("fechaUtilidad"),
+          wiki: formData.get("wiki"),
+          intro: formData.get("intro"),
+          imagen,
+          cientificos: formData.get("cientificos")?.split(',').map(c => c.trim()).filter(Boolean) || []
+        };
+
+        DatosApp.guardarEntidad(nueva).then(() => {
+          alert("Entidad guardada correctamente.");
+          window.location.href = "index.html";
+        });
+      };
+
+      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => guardar(reader.result);
+        reader.readAsDataURL(archivoImagen);
+      } else {
+        guardar();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -140,6 +140,25 @@ async function eliminarProducto(nombre) {
     }
 }
 
+async function eliminarCientifico(nombre) {
+    if (confirm(`¿Eliminar al científico "${nombre}"?`)) {
+      const datos = await DatosApp.cargarDatos();
+      datos.cientificos = datos.cientificos.filter(c => c.nombre !== nombre);
+      DatosApp.guardarDatos(datos);
+      renderizarListaCientificos(datos.cientificos, 'contenedor-cientificos-escritor', true);
+    }
+  }
+  
+  async function eliminarEntidad(nombre) {
+    if (confirm(`¿Eliminar la entidad "${nombre}"?`)) {
+      const datos = await DatosApp.cargarDatos();
+      datos.entidades = datos.entidades.filter(e => e.nombre !== nombre);
+      DatosApp.guardarDatos(datos);
+      renderizarListaEntidades(datos.entidades, 'contenedor-entidades-escritor', true);
+    }
+  }
+  
+
 // Navegación entre vistas
 function verProducto(nombre) {
     localStorage.setItem("productoSeleccionado", nombre);
