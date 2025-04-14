@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anales de la Ciencia</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
-
 <body>
   <header>
     <h1>Anales de la Ciencia</h1>
+
     <form id="formulario-inicio-sesion" class="formulario-inicio-sesion">
       <div class="grupo-formulario">
         <label for="usuario">Usuario:</label>
@@ -22,216 +21,76 @@
       </div>
       <button type="submit">Login</button>
     </form>
+
     <div id="contenedor-logout" class="formulario-inicio-sesion" style="display: none;">
       <button id="boton-cerrar-sesion">Logout</button>
     </div>
   </header>
 
-  <!-- Vista Usuario Normal -->
+  <!-- Vista usuario normal -->
   <div id="vista-usuario-normal">
     <main>
-      <!-- Productos -->
       <section class="seccion-datos">
         <h2>Productos</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/cssIcon.png" alt="CSS" />
-            <a href="producto.html" onclick="verProducto('CSS')">CSS</a>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/htmlIcono.png" alt="HTML" />
-            <a href="producto.html" onclick="verProducto('HTML')">HTML</a>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-productos-normal"></div>
       </section>
 
-      <!-- Científicos -->
       <section class="seccion-datos">
         <h2>Científicos</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/vannevar.png" alt="Vannevar Bush" />
-            <a href="#" onclick="verCientifico('Vannevar Bush')">Vannevar Bush</a>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/tim.png" alt="Tim Berners-Lee" />
-            <a href="#" onclick="verCientifico('Tim Berners-Lee')">Tim Berners-Lee</a>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-cientificos-normal"></div>
       </section>
 
-      <!-- Entidades -->
       <section class="seccion-datos">
         <h2>Entidades</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/ibm.png" alt="IBM" />
-            <a href="#" onclick="verEntidad('IBM')">IBM</a>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/w3c.png" alt="W3C" />
-            <a href="#" onclick="verEntidad('W3C')">W3C</a>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-entidades-normal"></div>
       </section>
     </main>
   </div>
 
-  <!-- Vista Lector -->
+  <!-- Vista lector -->
   <div id="vista-lector" style="display: none;">
     <main>
-      <!-- Productos -->
       <section class="seccion-datos">
         <h2>Productos</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/cssIcon.png" alt="CSS" />
-            <a href="producto.html" onclick="verProducto('CSS')">CSS</a>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/htmlIcono.png" alt="HTML" />
-            <a href="producto.html" onclick="verProducto('HTML')">HTML</a>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-productos-lector"></div>
       </section>
 
-      <!-- Científicos -->
       <section class="seccion-datos">
         <h2>Científicos</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/vannevar.png" alt="Vannevar Bush" />
-            <a href="#" onclick="verCientifico('Vannevar Bush')">Vannevar Bush</a>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/tim.png" alt="Tim Berners-Lee" />
-            <a href="#" onclick="verCientifico('Tim Berners-Lee')">Tim Berners-Lee</a>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-cientificos-lector"></div>
       </section>
 
-      <!-- Entidades -->
       <section class="seccion-datos">
         <h2>Entidades</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/ibm.png" alt="IBM" />
-            <a href="#" onclick="verEntidad('IBM')">IBM</a>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/w3c.png" alt="W3C" />
-            <a href="#" onclick="verEntidad('W3C')">W3C</a>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-entidades-lector"></div>
       </section>
     </main>
   </div>
 
-  <!-- Vista Escritor -->
+  <!-- Vista escritor -->
   <div id="vista-escritor" style="display: none;">
     <main>
-      <!-- Productos -->
       <section class="seccion-datos">
         <h2>Productos</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/cssIcon.png" alt="CSS" />
-            <a href="producto.html" onclick="verProducto('CSS')">CSS</a>
-            <button class="boton-eliminar">delete</button>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/htmlIcono.png" alt="HTML" />
-            <a href="producto.html" onclick="verProducto('HTML')">HTML</a> <button
-              class="boton-eliminar">delete</button>
-          </div>
-        </div>
+        <div class="cuadricula-datos" id="contenedor-productos-escritor"></div>
         <a href="crear-producto.html" class="boton-crear">create</a>
       </section>
 
-      <!-- Científicos -->
       <section class="seccion-datos">
         <h2>Científicos</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/vannevar.png" alt="Vannevar Bush" />
-            <a href="#" onclick="verCientifico('Vannevar Bush')">Vannevar Bush</a>
-            <button class="boton-eliminar">delete</button>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/tim.png" alt="Tim Berners-Lee" />
-            <a href="#" onclick="verCientifico('Tim Berners-Lee')">Tim Berners-Lee</a>
-            <button class="boton-eliminar">delete</button>
-          </div>
-        </div>
-        <button class="boton-crear">create</button>
+        <div class="cuadricula-datos" id="contenedor-cientificos-escritor"></div>
+        <a href="crear-cientifico.html" class="boton-crear">create</a>
       </section>
 
-      <!-- Entidades -->
       <section class="seccion-datos">
         <h2>Entidades</h2>
-        <div class="cuadricula-datos">
-          <div class="elemento-datos">
-            <img src="img/ibm.png" alt="IBM" />
-            <a href="#" onclick="verEntidad('IBM')">IBM</a>
-            <button class="boton-eliminar">delete</button>
-          </div>
-          <div class="elemento-datos">
-            <img src="img/w3c.png" alt="W3C" />
-            <a href="#" onclick="verEntidad('W3C')">W3C</a>
-            <button class="boton-eliminar">delete</button>
-          </div>
-        </div>
-        <button class="boton-crear">create</button>
+        <div class="cuadricula-datos" id="contenedor-entidades-escritor"></div>
+        <a href="crear-entidad.html" class="boton-crear">create</a>
       </section>
     </main>
   </div>
 
+  <script src="js/datosCentralizados.js"></script>
   <script src="js/main.js"></script>
-  <script src="js/datos.js"></script>
-  <script src="js/productos.js"></script>
-  <script src="js/cientificos.js"></script>
-  <script src="js/entidades.js"></script>
-
-  <script>
-    if (!localStorage.getItem("productos")) {
-      ServicioDatos.guardarProductos(productos);
-    }
-    if (!localStorage.getItem("cientificos")) {
-      ServicioDatos.guardarCientificos(cientificos);
-    }
-    if (!localStorage.getItem("entidades")) {
-      ServicioDatos.guardarEntidades(entidades);
-    }
-
-    function verProducto(nombre) {
-      const producto = ServicioDatos.obtenerProductoPorNombre(nombre);
-      if (producto) {
-        ServicioDatos.guardarProductoSeleccionado(producto);
-      }
-    }
-
-    function verCientifico(nombre) {
-      const cientifico = ServicioDatos.obtenerCientificoPorNombre(nombre);
-      if (cientifico) {
-        ServicioDatos.guardarCientificoSeleccionado(cientifico);
-        window.location.href = "cientifico.html";
-      }
-    }
-
-
-    function verEntidad(nombre) {
-      const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
-      if (entidad) {
-        ServicioDatos.guardarEntidadSeleccionada(entidad);
-        window.location.href = "entidad.html";
-      }
-    }
-
-    if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
-      window.location.reload();
-    }
-
-  </script>
 </body>
-
 </html>

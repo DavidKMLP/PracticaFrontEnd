@@ -13,22 +13,26 @@
 
   <main class="pagina-producto" id="detalle-entidad"></main>
 
-  <script src="js/datos.js"></script>
+  <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
-    const entidad = ServicioDatos.obtenerEntidadSeleccionada();
+    async function mostrarEntidad() {
+      const entidad = await DatosApp.obtenerEntidadSeleccionada();
+      const contenedor = document.getElementById('detalle-entidad');
 
-    if (!entidad) {
-      document.getElementById('detalle-entidad').innerHTML = "<p>Entidad no encontrada.</p>";
-    } else {
-      document.getElementById('detalle-entidad').innerHTML = `
+      if (!entidad) {
+        contenedor.innerHTML = "<p>Entidad no encontrada.</p>";
+        return;
+      }
+
+      contenedor.innerHTML = `
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${entidad.nombre}</h1>
           <img src="${entidad.imagen}" alt="${entidad.nombre}" class="imagen-wiki" />
         </header>
 
         <section class="descripcion-wiki">
-          <p class="intro-wiki">${entidad.intro}</p>
+          <p class="intro-wiki">${entidad.intro || ''}</p>
         </section>
 
         <section class="datos-wiki">
@@ -39,29 +43,29 @@
           </table>
         </section>
 
-        <section class="relaciones-wiki">
-          <h3>Científicos relacionados</h3>
+        <section class="relacionados">
+          <h2>Científicos Relacionados</h2>
           <div class="cuadricula-datos" id="cientificos-relacionados"></div>
-        </section>
 
-        <section class="relaciones-wiki">
-          <h3>Productos relacionados</h3>
+          <h2>Productos Relacionados</h2>
           <div class="cuadricula-datos" id="productos-relacionados"></div>
         </section>
       `;
 
-      // Científicos relacionados
-      const cientificos = ServicioDatos.obtenerCientificos();
-      const relacionadosC = cientificos.filter(c => c.entidades?.includes(entidad.nombre));
-      const contCientificos = document.getElementById('cientificos-relacionados');
+      const cientificos = await DatosApp.obtenerCientificos();
+      const productos = await DatosApp.obtenerProductos();
 
+      const contCientificos = document.getElementById('cientificos-relacionados');
+      const contProductos = document.getElementById('productos-relacionados');
+
+      const relacionadosC = cientificos.filter(c => c.entidades?.includes(entidad.nombre));
       if (relacionadosC.length > 0) {
         relacionadosC.forEach(c => {
-          const div = document.createElement('div');
-          div.className = 'elemento-datos';
+          const div = document.createElement("div");
+          div.className = "elemento-datos";
           div.innerHTML = `
-            <img src="${c.imagen}" alt="${c.nombre}">
-            <a href="#" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
+            <img src="${c.imagen}" alt="${c.nombre}" />
+            <a href="cientifico.html" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
           `;
           contCientificos.appendChild(div);
         });
@@ -69,18 +73,14 @@
         contCientificos.innerHTML = "<p>No hay científicos relacionados.</p>";
       }
 
-      // Productos relacionados
-      const productos = ServicioDatos.obtenerProductos();
       const relacionadosP = productos.filter(p => p.entidades?.includes(entidad.nombre));
-      const contProductos = document.getElementById('productos-relacionados');
-
       if (relacionadosP.length > 0) {
         relacionadosP.forEach(p => {
-          const div = document.createElement('div');
-          div.className = 'elemento-datos';
+          const div = document.createElement("div");
+          div.className = "elemento-datos";
           div.innerHTML = `
-            <img src="${p.imagen}" alt="${p.nombre}">
-            <a href="#" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
+            <img src="${p.imagen}" alt="${p.nombre}" />
+            <a href="producto.html" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
           `;
           contProductos.appendChild(div);
         });
@@ -88,6 +88,8 @@
         contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
       }
     }
+
+    mostrarEntidad();
   </script>
 </body>
 </html>

@@ -1,0 +1,77 @@
+{
+  "productos": [
+    {
+      "nombre": "CSS",
+      "fechaCreacion": "1996",
+      "fechaUtilidad": "Actualidad",
+      "imagen": "img/cssIcon.png",
+      "wiki": "https://es.wikipedia.org/wiki/CSS",
+      "personas": ["Håkon Wium Lie"],
+      "entidades": ["W3C"],
+      "intro": "Hojas de estilo en cascada (CSS) es un lenguaje de diseño gráfico para definir y crear la presentación de un documento estructurado escrito en HTML."
+    },
+    {
+      "nombre": "HTML",
+      "fechaCreacion": "1993",
+      "fechaUtilidad": "Actualidad",
+      "imagen": "img/htmlIcono.png",
+      "wiki": "https://es.wikipedia.org/wiki/HTML",
+      "personas": [
+        "Tim Berners-Lee"
+      ],
+      "entidades": [
+        "W3C"
+      ]
+    }
+  ],
+  "cientificos": [
+    {
+      "nombre": "Håkon Wium Lie",
+      "fechaCreacion": "27 de julio de 1965",
+      "fechaUtilidad": "Actualidad",
+      "imagen": "img/lie.png",
+      "wiki": "https://es.wikipedia.org/wiki/H%C3%A5kon_Wium_Lie",
+      "entidades": ["W3C"],
+      "intro": "Håkon Wium Lie es un científico noruego conocido por ser el creador de CSS mientras trabajaba con Tim Berners-Lee en el CERN."
+    },
+    {
+      "nombre": "Vannevar Bush",
+      "fechaCreacion": "11 de marzo de 1890",
+      "fechaUtilidad": "30 de junio de 1974",
+      "imagen": "img/vannevar.png",
+      "wiki": "https://es.wikipedia.org/wiki/Vannevar_Bush",
+      "entidades": [
+        "IBM"
+      ],
+      "intro": "Prueba"
+    },
+    {
+      "nombre": "Tim Berners-Lee",
+      "fechaCreacion": "8 de junio de 1955",
+      "fechaUtilidad": "Actualidad",
+      "imagen": "img/tim.png",
+      "wiki": "https://es.wikipedia.org/wiki/Tim_Berners-Lee",
+      "entidades": [
+        "W3C"
+      ],
+      "intro": "Timothy John Berners-Lee, también conocido como Tim Berners-Lee, es un científico de la computación británico, conocido por ser el inventor de la World Wide Web. Propuso un sistema de gestión de información en marzo de 1989, que más tarde se convirtió en la Web."
+    }
+  ],
+  "entidades": [
+    {
+      "nombre": "W3C",
+      "fechaCreacion": "1994",
+      "fechaUtilidad": "Actualidad",
+      "imagen": "img/w3c.png",
+      "wiki": "https://es.wikipedia.org/wiki/World_Wide_Web_Consortium",
+      "intro": "El World Wide Web Consortium (W3C) es un consorcio internacional que genera recomendaciones y estándares que aseguran el crecimiento a largo plazo de la Web."
+    },
+    {
+      "nombre": "IBM",
+      "fechaCreacion": "1911",
+      "fechaUtilidad": "Actualidad",
+      "imagen": "img/ibm.png",
+      "wiki": "https://es.wikipedia.org/wiki/IBM"
+    }
+  ]
+}

@@ -14,22 +14,26 @@
 
   <main class="pagina-producto" id="detalle-cientifico"></main>
 
-  <script src="js/datos.js"></script>
+  <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
-    const cientifico = ServicioDatos.obtenerCientificoSeleccionado();
+    async function mostrarCientifico() {
+      const cientifico = await DatosApp.obtenerCientificoSeleccionado();
+      const contenedor = document.getElementById('detalle-cientifico');
 
-    if (!cientifico) {
-      document.getElementById('detalle-cientifico').innerHTML = "<p>Científico no encontrado.</p>";
-    } else {
-      document.getElementById('detalle-cientifico').innerHTML = `
+      if (!cientifico) {
+        contenedor.innerHTML = "<p>Científico no encontrado.</p>";
+        return;
+      }
+
+      contenedor.innerHTML = `
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${cientifico.nombre}</h1>
           <img src="${cientifico.imagen}" alt="${cientifico.nombre}" class="imagen-wiki" />
         </header>
 
         <section class="descripcion-wiki">
-          <p class="intro-wiki">${cientifico.intro}</p>
+          <p class="intro-wiki">${cientifico.intro || ''}</p>
         </section>
 
         <section class="datos-wiki">
@@ -40,56 +44,55 @@
           </table>
         </section>
 
-        <section class="relaciones-wiki">
-          <h3>Entidades relacionadas</h3>
+        <section class="relacionados">
+          <h2>Entidades Relacionadas</h2>
           <div class="cuadricula-datos" id="entidades-relacionadas"></div>
-        </section>
 
-        <section class="relaciones-wiki">
-          <h3>Productos relacionados</h3>
+          <h2>Productos Relacionados</h2>
           <div class="cuadricula-datos" id="productos-relacionados"></div>
         </section>
       `;
 
-      // Entidades relacionadas
-      const contenedorEntidades = document.getElementById('entidades-relacionadas');
+      const entidades = await DatosApp.obtenerEntidades();
+      const productos = await DatosApp.obtenerProductos();
 
-      if (cientifico.entidades && cientifico.entidades.length > 0) {
+      const contEntidades = document.getElementById('entidades-relacionadas');
+      const contProductos = document.getElementById('productos-relacionados');
+
+      if (cientifico.entidades?.length > 0) {
         cientifico.entidades.forEach(nombre => {
-          const entidad = ServicioDatos.obtenerEntidadPorNombre(nombre);
+          const entidad = entidades.find(e => e.nombre === nombre);
           if (entidad) {
-            const div = document.createElement('div');
-            div.className = 'elemento-datos';
+            const div = document.createElement("div");
+            div.className = "elemento-datos";
             div.innerHTML = `
-              <img src="${entidad.imagen}" alt="${entidad.nombre}">
-              <a href="#" onclick="verEntidad('${entidad.nombre}')">${entidad.nombre}</a>
+              <img src="${entidad.imagen}" alt="${entidad.nombre}" />
+              <a href="entidad.html" onclick="verEntidad('${entidad.nombre}')">${entidad.nombre}</a>
             `;
-            contenedorEntidades.appendChild(div);
+            contEntidades.appendChild(div);
           }
         });
       } else {
-        contenedorEntidades.innerHTML = "<p>No hay entidades relacionadas con este científico.</p>";
+        contEntidades.innerHTML = "<p>No hay entidades relacionadas.</p>";
       }
 
-      // Productos relacionados
-      const contenedorProductos = document.getElementById('productos-relacionados');
-      const productos = ServicioDatos.obtenerProductos();
       const relacionados = productos.filter(p => p.personas?.includes(cientifico.nombre));
-
       if (relacionados.length > 0) {
-        relacionados.forEach(producto => {
-          const div = document.createElement('div');
-          div.className = 'elemento-datos';
+        relacionados.forEach(p => {
+          const div = document.createElement("div");
+          div.className = "elemento-datos";
           div.innerHTML = `
-            <img src="${producto.imagen}" alt="${producto.nombre}">
-            <a href="#" onclick="verProducto('${producto.nombre}')">${producto.nombre}</a>
+            <img src="${p.imagen}" alt="${p.nombre}" />
+            <a href="producto.html" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
           `;
-          contenedorProductos.appendChild(div);
+          contProductos.appendChild(div);
         });
       } else {
-        contenedorProductos.innerHTML = "<p>No hay productos relacionados con este científico.</p>";
+        contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
       }
     }
+
+    mostrarCientifico();
   </script>
 </body>
 </html>
