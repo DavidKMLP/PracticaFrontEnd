@@ -5,7 +5,7 @@ const DatosApp = {
         if (guardados) {
             return JSON.parse(guardados);
         } else {
-            const respuesta = await fetch("datos.json"); // opcional
+            const respuesta = await fetch("datos.json");
             const datos = await respuesta.json();
             localStorage.setItem(this.clave, JSON.stringify(datos));
             return datos;
