@@ -1,6 +1,6 @@
 const usuarios = [
-    { usuario: 'x', contrasena: 'x', rol: 'lector' },
-    { usuario: 'y', contrasena: 'y', rol: 'lector' },
+    { usuario: 'x', contrasena: 'x', rol: 'escritor' },
+    { usuario: 'y', contrasena: 'y', rol: 'escritor' },
     { usuario: 'z', contrasena: 'z', rol: 'escritor' }
 ];
 

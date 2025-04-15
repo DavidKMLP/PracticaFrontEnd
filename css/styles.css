@@ -1,4 +1,3 @@
-/* Resetear estilos por defecto */
 * {
     margin: 0;
     padding: 0;
@@ -31,7 +30,6 @@ body::before {
     z-index: -1;
 }
 
-/* Estilos del Encabezado */
 header {
     background-color: #2a3c38;
     padding: 1rem;
@@ -50,7 +48,7 @@ header h1 {
 
 .formulario-inicio-sesion {
     display: flex;
-    align-items: flex-end; /* Alinea el botón al fondo de los inputs */
+    align-items: flex-end;
     gap: 1rem;
 }
 
@@ -109,7 +107,6 @@ header h1 {
     background-color: #a29dff;
 }
 
-/* Estilos del Contenido Principal */
 main {
     padding: 2rem;
 }
@@ -188,7 +185,6 @@ main {
     width: fit-content;
 }
 
-/* Diseño Responsivo */
 @media (max-width: 768px) {
     header {
         flex-direction: column;
@@ -229,7 +225,6 @@ main {
     }
 }
 
-/* Estilos para la Página de Detalle del Producto */
 .detalle-producto {
     display: flex;
     gap: 2rem;
@@ -289,13 +284,11 @@ main {
     background-color: #a29dff;
 }
 
-/* Ajuste para que los enlaces en elemento-datos no afecten el diseño */
 .elemento-datos {
     text-decoration: none;
     color: inherit;
 }
 
-/* Asegurar que el botón eliminar dentro de un enlace funcione correctamente */
 .elemento-datos .boton-eliminar {
     margin-left: auto;
 }

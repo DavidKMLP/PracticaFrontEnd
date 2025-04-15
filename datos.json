@@ -6,8 +6,12 @@
       "fechaUtilidad": "Actualidad",
       "imagen": "img/cssIcon.png",
       "wiki": "https://es.wikipedia.org/wiki/CSS",
-      "personas": ["Håkon Wium Lie"],
-      "entidades": ["W3C"],
+      "personas": [
+        "Håkon Wium Lie"
+      ],
+      "entidades": [
+        "W3C"
+      ],
       "intro": "Hojas de estilo en cascada (CSS) es un lenguaje de diseño gráfico para definir y crear la presentación de un documento estructurado escrito en HTML."
     },
     {
@@ -21,7 +25,8 @@
       ],
       "entidades": [
         "W3C"
-      ]
+      ],
+      "intro": "HTML (HyperText Markup Language) es el lenguaje de marcado estándar para crear páginas web. Fue propuesto por Tim Berners-Lee y es uno de los pilares fundamentales de la Web."
     }
   ],
   "cientificos": [
@@ -31,7 +36,9 @@
       "fechaUtilidad": "Actualidad",
       "imagen": "img/lie.png",
       "wiki": "https://es.wikipedia.org/wiki/H%C3%A5kon_Wium_Lie",
-      "entidades": ["W3C"],
+      "entidades": [
+        "W3C"
+      ],
       "intro": "Håkon Wium Lie es un científico noruego conocido por ser el creador de CSS mientras trabajaba con Tim Berners-Lee en el CERN."
     },
     {
@@ -43,7 +50,7 @@
       "entidades": [
         "IBM"
       ],
-      "intro": "Prueba"
+      "intro": "Vannevar Bush fue un ingeniero e inventor estadounidense, conocido por su propuesta del Memex, un concepto precursor de la hipertextualidad, y por su rol en el impulso de la ciencia en EE.UU. durante la Segunda Guerra Mundial."
     },
     {
       "nombre": "Tim Berners-Lee",
@@ -71,7 +78,8 @@
       "fechaCreacion": "1911",
       "fechaUtilidad": "Actualidad",
       "imagen": "img/ibm.png",
-      "wiki": "https://es.wikipedia.org/wiki/IBM"
+      "wiki": "https://es.wikipedia.org/wiki/IBM",
+      "intro": "IBM (International Business Machines) es una empresa multinacional estadounidense que ofrece hardware, software y servicios tecnológicos. Es conocida por su papel pionero en el desarrollo de la computación moderna."
     }
   ]
 }
