@@ -17,11 +17,14 @@
       <label>Fecha de creación: <input type="text" name="fechaCreacion" required /></label>
       <label>Fecha de utilidad: <input type="text" name="fechaUtilidad" required /></label>
       <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
+
       <label>Introducción:
         <textarea name="intro" rows="4" placeholder="Breve descripción..."></textarea>
       </label>
+
       <label>Científicos relacionados (separados por coma): <input type="text" name="cientificos" /></label>
-      <label>Imagen (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg, .jpeg, .png" /></label>
+      <label>Imagen (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg,.jpeg,.png" /></label>
+
       <button type="submit">Guardar Entidad</button>
     </form>
   </main>
@@ -30,26 +33,41 @@
   <script>
     const formulario = document.getElementById("formulario-crear-entidad");
 
-    formulario.addEventListener("submit", function (e) {
+    formulario.addEventListener("submit", async function (e) {
       e.preventDefault();
       const formData = new FormData(formulario);
       const archivoImagen = formData.get("imagen");
 
-      const guardar = (imagen = "") => {
-        const nueva = {
+      const cientificosRelacionados = formData.get("cientificos").split(',').map(c => c.trim()).filter(Boolean);
+      const todosCientificos = await DatosApp.obtenerCientificos();
+
+      const guardar = async (imagen = "") => {
+        const nuevaEntidad = {
           nombre: formData.get("nombre"),
           fechaCreacion: formData.get("fechaCreacion"),
           fechaUtilidad: formData.get("fechaUtilidad"),
           wiki: formData.get("wiki"),
           intro: formData.get("intro"),
           imagen,
-          cientificos: formData.get("cientificos")?.split(',').map(c => c.trim()).filter(Boolean) || []
+          cientificos: cientificosRelacionados
         };
 
-        DatosApp.guardarEntidad(nueva).then(() => {
-          alert("Entidad guardada correctamente.");
-          window.location.href = "index.html";
+        await DatosApp.guardarEntidad(nuevaEntidad);
+
+        // Asociar esta entidad a los científicos
+        cientificosRelacionados.forEach(nombre => {
+          const cientifico = todosCientificos.find(c => c.nombre === nombre);
+          if (cientifico && !cientifico.entidades.includes(nuevaEntidad.nombre)) {
+            cientifico.entidades.push(nuevaEntidad.nombre);
+          }
         });
+
+        const datos = await DatosApp.cargarDatos();
+        datos.cientificos = todosCientificos;
+        await DatosApp.guardarDatos(datos);
+
+        alert("Entidad creada correctamente.");
+        window.location.href = "index.html";
       };
 
       if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
@@ -57,7 +75,7 @@
         reader.onload = () => guardar(reader.result);
         reader.readAsDataURL(archivoImagen);
       } else {
-        guardar();
+        await guardar();
       }
     });
   </script>

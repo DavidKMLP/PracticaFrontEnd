@@ -45,7 +45,7 @@
         return;
       }
 
-      // Precargar datos
+      // Precargar datos en el formulario
       formulario.nombre.value = entidadActual.nombre;
       formulario.fechaCreacion.value = entidadActual.fechaCreacion;
       formulario.fechaUtilidad.value = entidadActual.fechaUtilidad;
@@ -61,6 +61,8 @@
 
       const entidades = await DatosApp.obtenerEntidades();
       const index = entidades.findIndex(e => e.nombre === entidadActual.nombre);
+      const cientificosRelacionados = formData.get("cientificos").split(',').map(c => c.trim()).filter(Boolean);
+      const todosCientificos = await DatosApp.obtenerCientificos();
 
       const guardar = async (imagenNueva = entidadActual.imagen) => {
         const actualizado = {
@@ -70,15 +72,26 @@
           wiki: formData.get("wiki"),
           intro: formData.get("intro"),
           imagen: imagenNueva,
-          cientificos: formData.get("cientificos").split(',').map(c => c.trim()).filter(Boolean)
+          cientificos: cientificosRelacionados
         };
 
         entidades[index] = actualizado;
+
+        cientificosRelacionados.forEach(nombre => {
+          const cientifico = todosCientificos.find(c => c.nombre === nombre);
+          if (cientifico) {
+            if (!cientifico.entidades.includes(actualizado.nombre)) {
+              cientifico.entidades.push(actualizado.nombre);
+            }
+          }
+        });
+
         const datos = await DatosApp.cargarDatos();
         datos.entidades = entidades;
-        DatosApp.guardarDatos(datos);
+        datos.cientificos = todosCientificos;
+        await DatosApp.guardarDatos(datos);
 
-        alert("Entidad actualizada.");
+        alert("Entidad actualizada correctamente.");
         window.location.href = "index.html";
       };
 
