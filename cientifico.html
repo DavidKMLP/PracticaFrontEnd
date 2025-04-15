@@ -17,9 +17,13 @@
   <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
+    let cientifico = null;
+
     async function mostrarCientifico() {
-      const cientifico = await DatosApp.obtenerCientificoSeleccionado();
+      cientifico = await DatosApp.obtenerCientificoSeleccionado();
       const contenedor = document.getElementById('detalle-cientifico');
+      const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
+      const puedeEditar = sesion?.rol === "escritor";
 
       if (!cientifico) {
         contenedor.innerHTML = "<p>Científico no encontrado.</p>";
@@ -30,6 +34,7 @@
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${cientifico.nombre}</h1>
           <img src="${cientifico.imagen}" alt="${cientifico.nombre}" class="imagen-wiki" />
+          ${puedeEditar ? `<button class="boton-editar" onclick="editarCientificoDesdeVista()">Editar datos</button>` : ""}
         </header>
 
         <section class="descripcion-wiki">
@@ -55,7 +60,6 @@
 
       const entidades = await DatosApp.obtenerEntidades();
       const productos = await DatosApp.obtenerProductos();
-
       const contEntidades = document.getElementById('entidades-relacionadas');
       const contProductos = document.getElementById('productos-relacionados');
 
@@ -90,6 +94,11 @@
       } else {
         contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
       }
+    }
+
+    function editarCientificoDesdeVista() {
+      localStorage.setItem("cientificoEditando", cientifico.nombre);
+      window.location.href = "editar-cientifico.html";
     }
 
     mostrarCientifico();

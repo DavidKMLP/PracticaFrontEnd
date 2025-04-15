@@ -41,7 +41,7 @@
       const formData = new FormData(formulario);
       const archivoImagen = formData.get("imagen");
 
-      const procesarYGuardar = (imagenFinal = "") => {
+      const guardar = (imagenFinal = "") => {
         const nuevoProducto = {
           nombre: formData.get("nombre"),
           fechaCreacion: formData.get("fechaCreacion"),
@@ -62,11 +62,11 @@
       if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
         const reader = new FileReader();
         reader.onload = function () {
-          procesarYGuardar(reader.result);
+          guardar(reader.result);
         };
         reader.readAsDataURL(archivoImagen);
       } else {
-        procesarYGuardar();
+        guardar();
       }
     });
   </script>

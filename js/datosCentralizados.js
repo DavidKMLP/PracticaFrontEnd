@@ -1,7 +1,5 @@
 const DatosApp = {
-    clave: "datosGuardados",
-
-    // Leer datos
+    clave: "datosGuardados", 
     cargarDatos: async function () {
         const guardados = localStorage.getItem(this.clave);
         if (guardados) {
@@ -13,13 +11,10 @@ const DatosApp = {
             return datos;
         }
     },
-
-    // Guardar todo
     guardarDatos: function (datos) {
         localStorage.setItem(this.clave, JSON.stringify(datos));
     },
-
-    // Accesos rápidos
+  
     obtenerProductos: async function () {
         const datos = await this.cargarDatos();
         return datos.productos || [];

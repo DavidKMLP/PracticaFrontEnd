@@ -33,7 +33,7 @@
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${producto.nombre}</h1>
           <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-wiki" />
-${puedeEditar ? `<button class="boton-editar" onclick="editarProductoDesdeVista()">Editar datos</button>` : ""}
+          ${puedeEditar ? `<button class="boton-editar" onclick="editarProductoDesdeVista()">Editar datos</button>` : ""}
         </header>
   
         <section class="descripcion-wiki">
@@ -59,7 +59,6 @@ ${puedeEditar ? `<button class="boton-editar" onclick="editarProductoDesdeVista(
 
       const cientificos = await DatosApp.obtenerCientificos();
       const entidades = await DatosApp.obtenerEntidades();
-
       const contCientificos = document.getElementById('cientificos-relacionados');
       const contEntidades = document.getElementById('entidades-relacionadas');
 
