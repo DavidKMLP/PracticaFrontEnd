@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Detalle del Producto</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Anales de la Ciencia</h1>
@@ -19,6 +21,8 @@
     async function mostrarProducto() {
       const producto = await DatosApp.obtenerProductoSeleccionado();
       const contenedor = document.getElementById('detalle-producto');
+      const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
+      const puedeEditar = sesion?.rol === "escritor";
 
       if (!producto) {
         contenedor.innerHTML = "<p>Producto no encontrado.</p>";
@@ -29,12 +33,13 @@
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${producto.nombre}</h1>
           <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-wiki" />
+${puedeEditar ? `<button class="boton-editar" onclick="editarProductoDesdeVista()">Editar datos</button>` : ""}
         </header>
-
+  
         <section class="descripcion-wiki">
           <p class="intro-wiki">${producto.intro || ''}</p>
         </section>
-
+  
         <section class="datos-wiki">
           <table>
             <tr><th>Fecha de creación</th><td>${producto.fechaCreacion}</td></tr>
@@ -42,11 +47,11 @@
             <tr><th>Wiki</th><td><a href="${producto.wiki}" target="_blank">Ver en Wikipedia</a></td></tr>
           </table>
         </section>
-
+  
         <section class="relacionados">
           <h2>Científicos Relacionados</h2>
           <div class="cuadricula-datos" id="cientificos-relacionados"></div>
-
+  
           <h2>Entidades Relacionadas</h2>
           <div class="cuadricula-datos" id="entidades-relacionadas"></div>
         </section>
@@ -93,7 +98,14 @@
       }
     }
 
+    function editarProductoDesdeVista() {
+      const producto = localStorage.getItem("productoSeleccionado");
+      localStorage.setItem("productoEditando", producto);
+      window.location.href = "editar-producto.html";
+    }
+
     mostrarProducto();
   </script>
 </body>
+
 </html>
