@@ -16,9 +16,13 @@
   <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
+    let entidad = null;
+
     async function mostrarEntidad() {
-      const entidad = await DatosApp.obtenerEntidadSeleccionada();
+      entidad = await DatosApp.obtenerEntidadSeleccionada();
       const contenedor = document.getElementById('detalle-entidad');
+      const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
+      const puedeEditar = sesion?.rol === "escritor";
 
       if (!entidad) {
         contenedor.innerHTML = "<p>Entidad no encontrada.</p>";
@@ -29,6 +33,7 @@
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${entidad.nombre}</h1>
           <img src="${entidad.imagen}" alt="${entidad.nombre}" class="imagen-wiki" />
+          ${puedeEditar ? `<button class="boton-editar" onclick="editarEntidadDesdeVista()">Editar datos</button>` : ""}
         </header>
 
         <section class="descripcion-wiki">
@@ -54,39 +59,39 @@
 
       const cientificos = await DatosApp.obtenerCientificos();
       const productos = await DatosApp.obtenerProductos();
-
       const contCientificos = document.getElementById('cientificos-relacionados');
       const contProductos = document.getElementById('productos-relacionados');
 
       const relacionadosC = cientificos.filter(c => c.entidades?.includes(entidad.nombre));
-      if (relacionadosC.length > 0) {
-        relacionadosC.forEach(c => {
-          const div = document.createElement("div");
-          div.className = "elemento-datos";
-          div.innerHTML = `
-            <img src="${c.imagen}" alt="${c.nombre}" />
-            <a href="cientifico.html" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
-          `;
-          contCientificos.appendChild(div);
-        });
-      } else {
-        contCientificos.innerHTML = "<p>No hay científicos relacionados.</p>";
-      }
+      relacionadosC.length > 0
+        ? relacionadosC.forEach(c => {
+            const div = document.createElement("div");
+            div.className = "elemento-datos";
+            div.innerHTML = `
+              <img src="${c.imagen}" alt="${c.nombre}" />
+              <a href="cientifico.html" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
+            `;
+            contCientificos.appendChild(div);
+          })
+        : contCientificos.innerHTML = "<p>No hay científicos relacionados.</p>";
 
       const relacionadosP = productos.filter(p => p.entidades?.includes(entidad.nombre));
-      if (relacionadosP.length > 0) {
-        relacionadosP.forEach(p => {
-          const div = document.createElement("div");
-          div.className = "elemento-datos";
-          div.innerHTML = `
-            <img src="${p.imagen}" alt="${p.nombre}" />
-            <a href="producto.html" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
-          `;
-          contProductos.appendChild(div);
-        });
-      } else {
-        contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
-      }
+      relacionadosP.length > 0
+        ? relacionadosP.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "elemento-datos";
+            div.innerHTML = `
+              <img src="${p.imagen}" alt="${p.nombre}" />
+              <a href="producto.html" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
+            `;
+            contProductos.appendChild(div);
+          })
+        : contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
+    }
+
+    function editarEntidadDesdeVista() {
+      localStorage.setItem("entidadEditando", entidad.nombre);
+      window.location.href = "editar-entidad.html";
     }
 
     mostrarEntidad();

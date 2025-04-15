@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Entidad</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Editar Entidad</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main>
+    <form id="formulario-editar-entidad" class="formulario">
+      <label>Nombre: <input type="text" name="nombre" required /></label>
+      <label>Fecha de creación: <input type="text" name="fechaCreacion" required /></label>
+      <label>Fecha de utilidad: <input type="text" name="fechaUtilidad" required /></label>
+      <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
+
+      <label>Introducción:
+        <textarea name="intro" rows="4" placeholder="Breve descripción..."></textarea>
+      </label>
+
+      <label>Científicos relacionados (separados por coma): <input type="text" name="cientificos" /></label>
+      <label>Imagen nueva (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg,.jpeg,.png" /></label>
+
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  </main>
+
+  <script src="js/datosCentralizados.js"></script>
+  <script>
+    const formulario = document.getElementById("formulario-editar-entidad");
+    let entidadActual = null;
+
+    async function cargarEntidad() {
+      const nombre = localStorage.getItem("entidadEditando");
+      const entidades = await DatosApp.obtenerEntidades();
+      entidadActual = entidades.find(e => e.nombre === nombre);
+
+      if (!entidadActual) {
+        alert("Entidad no encontrada.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      // Precargar datos
+      formulario.nombre.value = entidadActual.nombre;
+      formulario.fechaCreacion.value = entidadActual.fechaCreacion;
+      formulario.fechaUtilidad.value = entidadActual.fechaUtilidad;
+      formulario.wiki.value = entidadActual.wiki;
+      formulario.intro.value = entidadActual.intro || "";
+      formulario.cientificos.value = entidadActual.cientificos?.join(", ") || "";
+    }
+
+    formulario.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const formData = new FormData(formulario);
+      const archivoImagen = formData.get("imagen");
+
+      const entidades = await DatosApp.obtenerEntidades();
+      const index = entidades.findIndex(e => e.nombre === entidadActual.nombre);
+
+      const guardar = async (imagenNueva = entidadActual.imagen) => {
+        const actualizado = {
+          nombre: formData.get("nombre"),
+          fechaCreacion: formData.get("fechaCreacion"),
+          fechaUtilidad: formData.get("fechaUtilidad"),
+          wiki: formData.get("wiki"),
+          intro: formData.get("intro"),
+          imagen: imagenNueva,
+          cientificos: formData.get("cientificos").split(',').map(c => c.trim()).filter(Boolean)
+        };
+
+        entidades[index] = actualizado;
+        const datos = await DatosApp.cargarDatos();
+        datos.entidades = entidades;
+        DatosApp.guardarDatos(datos);
+
+        alert("Entidad actualizada.");
+        window.location.href = "index.html";
+      };
+
+      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = () => guardar(reader.result);
+        reader.readAsDataURL(archivoImagen);
+      } else {
+        await guardar();
+      }
+    });
+
+    cargarEntidad();
+  </script>
+</body>
+</html>
