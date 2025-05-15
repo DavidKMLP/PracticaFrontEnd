@@ -36,9 +36,11 @@ function mostrarVistaPorRol(usuario) {
 
     if (usuario.rol === 'lector') {
         document.getElementById('vista-lector').style.display = 'block';
-        DatosApp.obtenerProductos().then(productos => {
+
+        /*DatosApp.obtenerProductos().then(productos => {
             renderizarListaProductos(productos, 'contenedor-productos-lector');
-        });
+        });*/
+        cargarProductos();
 
         /*DatosApp.obtenerCientificos().then(cientificos => {
             renderizarListaCientificos(cientificos, 'contenedor-cientificos-lector');
@@ -46,24 +48,26 @@ function mostrarVistaPorRol(usuario) {
         cargarCientificos();
 
 
-        DatosApp.obtenerEntidades().then(entidades => {
+        /*DatosApp.obtenerEntidades().then(entidades => {
             renderizarListaEntidades(entidades, 'contenedor-entidades-lector');
-        });
+        });*/
+        cargarEntidades();
     } else if (usuario.rol === 'escritor') {
         document.getElementById('vista-escritor').style.display = 'block';
-        DatosApp.obtenerProductos().then(productos => {
+        /*DatosApp.obtenerProductos().then(productos => {
             renderizarListaProductos(productos, 'contenedor-productos-escritor', true);
-        });
+        });*/
+        cargarProductos();
         /*
         DatosApp.obtenerCientificos().then(c => {
             renderizarListaCientificos(c, 'contenedor-cientificos-escritor', true);
         });*/
         cargarCientificos();
 
-
-        DatosApp.obtenerEntidades().then(e => {
+        /*DatosApp.obtenerEntidades().then(e => {
             renderizarListaEntidades(e, 'contenedor-entidades-escritor', true);
-        });
+        });*/
+        cargarEntidades();
 
     }
 }
@@ -119,7 +123,43 @@ function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = 
     });
 }
 
-//Implemntacion con API y AJAX
+// Renderizar productos dinámicamente con API
+function renderizarListaProductos(productos, contenedorID, mostrarBotones = false) {
+  const contenedor = document.getElementById(contenedorID);
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
+
+  productos.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "elemento-datos";
+    div.innerHTML = `
+      <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
+      <a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>
+      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
+    `;
+    contenedor.appendChild(div);
+  });
+}
+
+// Renderizar entidades dinámicamente
+function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = false) {
+  const contenedor = document.getElementById(contenedorID);
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
+
+  entidades.forEach(e => {
+    const div = document.createElement("div");
+    div.className = "elemento-datos";
+    div.innerHTML = `
+      <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
+      <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
+      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
+    `;
+    contenedor.appendChild(div);
+  });
+}
+
+//Modificado para la implementacion 
 async function cargarCientificos() {
   console.log("▶️ Ejecutando cargarCientificos()");
 
@@ -203,32 +243,46 @@ async function cargarEntidades() {
   }
 }
 
+// Modificado para la implementacion de la api
+async function cargarProductos() {
+  console.log("▶️ Ejecutando cargarProductos()");
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/products?order=id&ordering=ASC');
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    const result = await response.json();
+    const productos = result.products.map(p => p.product);
 
-function verCientifico(id) {
-    localStorage.setItem("cientificoSeleccionadoId", id);
+    const contenedores = [
+      document.getElementById("contenedor-productos-normal"),
+      document.getElementById("contenedor-productos-lector"),
+      document.getElementById("contenedor-productos-escritor")
+    ];
+
+    contenedores.forEach(contenedor => {
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
+
+      productos.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+          <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
+          <a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>
+          ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
+        `;
+        contenedor.appendChild(div);
+      });
+    });
+
+  } catch (error) {
+    console.error("❌ Error al cargar productos:", error);
+    alert("No se pudieron cargar los productos. Revisa la consola.");
+  }
 }
 
-// Renderizar entidades dinámicamente
-function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = false) {
-  const contenedor = document.getElementById(contenedorID);
-  if (!contenedor) return;
-  contenedor.innerHTML = "";
-
-  entidades.forEach(e => {
-    const div = document.createElement("div");
-    div.className = "elemento-datos";
-    div.innerHTML = `
-      <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
-      <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
-      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
-    `;
-    contenedor.appendChild(div);
-  });
-}
-
-
-
-// Eliminar producto
+// Eliminar
 async function eliminarProducto(nombre) {
     if (confirm(`¿Eliminar el producto "${nombre}"?`)) {
         await DatosApp.eliminarProducto(nombre);
@@ -257,12 +311,16 @@ async function eliminarEntidad(nombre) {
 
 
 // Navegación entre vistas
-function verProducto(nombre) {
-    localStorage.setItem("productoSeleccionado", nombre);
+function verProducto(id) {
+    localStorage.setItem("productoSeleccionado", id);
 }
 
-function verEntidad(nombre) {
-    localStorage.setItem("entidadSeleccionada", nombre);
+function verEntidad(id) {
+    localStorage.setItem("entidadSeleccionada", id);
+}
+
+function verCientifico(id) {
+    localStorage.setItem("cientificoSeleccionadoId", id);
 }
 
 if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
@@ -279,6 +337,9 @@ cargarCientificos();
 
 //entidades con API
 cargarEntidades();
+
+//productos con API
+cargarProductos();
 
 
 DatosApp.obtenerEntidades().then(entidades => {

@@ -15,11 +15,13 @@
 
   <main class="pagina-producto" id="detalle-producto"></main>
 
-  <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
+    let producto = null;
+
+    // Modificado para la implementacion de la api
     async function mostrarProducto() {
-      const producto = await DatosApp.obtenerProductoSeleccionado();
+      producto = await obtenerProductoDesdeAPI();
       const contenedor = document.getElementById('detalle-producto');
       const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
       const puedeEditar = sesion?.rol === "escritor";
@@ -31,23 +33,19 @@
 
       contenedor.innerHTML = `
         <header class="cabecera-wiki">
-          <h1 class="titulo-wiki">${producto.nombre}</h1>
-          <img src="${producto.imagen}" alt="${producto.nombre}" class="imagen-wiki" />
+          <h1 class="titulo-wiki">${producto.name}</h1>
+          <img src="${producto.imageUrl}" alt="${producto.name}" class="imagen-wiki" />
           ${puedeEditar ? `<button class="boton-editar" onclick="editarProductoDesdeVista()">Editar datos</button>` : ""}
         </header>
-  
-        <section class="descripcion-wiki">
-          <p class="intro-wiki">${producto.intro || ''}</p>
-        </section>
-  
+
         <section class="datos-wiki">
           <table>
-            <tr><th>Fecha de creación</th><td>${producto.fechaCreacion}</td></tr>
-            <tr><th>Fecha de utilidad</th><td>${producto.fechaUtilidad}</td></tr>
-            <tr><th>Wiki</th><td><a href="${producto.wiki}" target="_blank">Ver en Wikipedia</a></td></tr>
+            <tr><th>Fecha de creación</th><td>${producto.birthDate}</td></tr>
+            <tr><th>Fecha de utilidad</th><td>${producto.deathDate}</td></tr>
+            <tr><th>Wiki</th><td><a href="${producto.wikiUrl}" target="_blank">Ver en Wikipedia</a></td></tr>
           </table>
         </section>
-  
+
         <section class="relacionados">
           <h2>Científicos Relacionados</h2>
           <div class="cuadricula-datos" id="cientificos-relacionados"></div>
@@ -56,55 +54,31 @@
           <div class="cuadricula-datos" id="entidades-relacionadas"></div>
         </section>
       `;
+    }
 
-      const cientificos = await DatosApp.obtenerCientificos();
-      const entidades = await DatosApp.obtenerEntidades();
-      const contCientificos = document.getElementById('cientificos-relacionados');
-      const contEntidades = document.getElementById('entidades-relacionadas');
+    // Modificado para la implementacion de la api
+    async function obtenerProductoDesdeAPI() {
+      const id = localStorage.getItem("productoSeleccionado");
+      if (!id) return null;
 
-      if (producto.personas?.length > 0) {
-        producto.personas.forEach(nombre => {
-          const c = cientificos.find(ci => ci.nombre === nombre);
-          if (c) {
-            const div = document.createElement('div');
-            div.className = 'elemento-datos';
-            div.innerHTML = `
-              <img src="${c.imagen}" alt="${c.nombre}">
-              <a href="cientifico.html" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
-            `;
-            contCientificos.appendChild(div);
-          }
-        });
-      } else {
-        contCientificos.innerHTML = "<p>No hay científicos relacionados.</p>";
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`);
+      if (!response.ok) {
+        console.error("Error al obtener el producto por ID");
+        return null;
       }
 
-      if (producto.entidades?.length > 0) {
-        producto.entidades.forEach(nombre => {
-          const e = entidades.find(ent => ent.nombre === nombre);
-          if (e) {
-            const div = document.createElement('div');
-            div.className = 'elemento-datos';
-            div.innerHTML = `
-              <img src="${e.imagen}" alt="${e.nombre}">
-              <a href="entidad.html" onclick="verEntidad('${e.nombre}')">${e.nombre}</a>
-            `;
-            contEntidades.appendChild(div);
-          }
-        });
-      } else {
-        contEntidades.innerHTML = "<p>No hay entidades relacionadas.</p>";
-      }
+      const result = await response.json();
+      return result.product;
     }
 
     function editarProductoDesdeVista() {
-      const producto = localStorage.getItem("productoSeleccionado");
-      localStorage.setItem("productoEditando", producto);
+      localStorage.setItem("productoEditando", producto.name);
       window.location.href = "editar-producto.html";
     }
 
     mostrarProducto();
   </script>
+
   <footer class="footer-ejemplo">
     <h2>Proyecto Front End David Lew Pérez 2025</h2>
   </footer>  
