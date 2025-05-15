@@ -13,13 +13,13 @@
 
   <main class="pagina-producto" id="detalle-entidad"></main>
 
-  <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
     let entidad = null;
 
+    // Modificado para la implementacion de la api
     async function mostrarEntidad() {
-      entidad = await DatosApp.obtenerEntidadSeleccionada();
+      entidad = await obtenerEntidadDesdeAPI();
       const contenedor = document.getElementById('detalle-entidad');
       const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
       const puedeEditar = sesion?.rol === "escritor";
@@ -31,20 +31,16 @@
 
       contenedor.innerHTML = `
         <header class="cabecera-wiki">
-          <h1 class="titulo-wiki">${entidad.nombre}</h1>
-          <img src="${entidad.imagen}" alt="${entidad.nombre}" class="imagen-wiki" />
+          <h1 class="titulo-wiki">${entidad.name}</h1>
+          <img src="${entidad.imageUrl}" alt="${entidad.name}" class="imagen-wiki" />
           ${puedeEditar ? `<button class="boton-editar" onclick="editarEntidadDesdeVista()">Editar datos</button>` : ""}
         </header>
 
-        <section class="descripcion-wiki">
-          <p class="intro-wiki">${entidad.intro || ''}</p>
-        </section>
-
         <section class="datos-wiki">
           <table>
-            <tr><th>Fecha de creación</th><td>${entidad.fechaCreacion}</td></tr>
-            <tr><th>Fecha de utilidad</th><td>${entidad.fechaUtilidad}</td></tr>
-            <tr><th>Wiki</th><td><a href="${entidad.wiki}" target="_blank">Ver en Wikipedia</a></td></tr>
+            <tr><th>Fecha de creación</th><td>${entidad.birthDate}</td></tr>
+            <tr><th>Fecha de utilidad</th><td>${entidad.deathDate}</td></tr>
+            <tr><th>Wiki</th><td><a href="${entidad.wikiUrl}" target="_blank">Ver en Wikipedia</a></td></tr>
           </table>
         </section>
 
@@ -56,41 +52,25 @@
           <div class="cuadricula-datos" id="productos-relacionados"></div>
         </section>
       `;
+    }
 
-      const cientificos = await DatosApp.obtenerCientificos();
-      const productos = await DatosApp.obtenerProductos();
-      const contCientificos = document.getElementById('cientificos-relacionados');
-      const contProductos = document.getElementById('productos-relacionados');
+    // Modificado para la implementacion de la api
+    async function obtenerEntidadDesdeAPI() {
+      const id = localStorage.getItem("entidadSeleccionada");
+      if (!id) return null;
 
-      const relacionadosC = cientificos.filter(c => c.entidades?.includes(entidad.nombre));
-      relacionadosC.length > 0
-        ? relacionadosC.forEach(c => {
-            const div = document.createElement("div");
-            div.className = "elemento-datos";
-            div.innerHTML = `
-              <img src="${c.imagen}" alt="${c.nombre}" />
-              <a href="cientifico.html" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
-            `;
-            contCientificos.appendChild(div);
-          })
-        : contCientificos.innerHTML = "<p>No hay científicos relacionados.</p>";
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`);
+      if (!response.ok) {
+        console.error("Error al obtener la entidad por ID");
+        return null;
+      }
 
-      const relacionadosP = productos.filter(p => p.entidades?.includes(entidad.nombre));
-      relacionadosP.length > 0
-        ? relacionadosP.forEach(p => {
-            const div = document.createElement("div");
-            div.className = "elemento-datos";
-            div.innerHTML = `
-              <img src="${p.imagen}" alt="${p.nombre}" />
-              <a href="producto.html" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
-            `;
-            contProductos.appendChild(div);
-          })
-        : contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
+      const result = await response.json();
+      return result.entity;
     }
 
     function editarEntidadDesdeVista() {
-      localStorage.setItem("entidadEditando", entidad.nombre);
+      localStorage.setItem("entidadEditando", entidad.name);
       window.location.href = "editar-entidad.html";
     }
 

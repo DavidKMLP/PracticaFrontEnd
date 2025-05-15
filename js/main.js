@@ -150,7 +150,7 @@ async function cargarCientificos() {
         const div = document.createElement("div");
         div.className = "elemento-datos";
         div.innerHTML = `
-          <img src="${c.image || 'img/default.jpg'}" alt="${c.id}" />
+          <img src="${c.imageUrl || 'img/default.jpg'}" alt="${c.id}" />
           <a href="cientifico.html" onclick="verCientifico(${c.id})">${c.name}</a>
           ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarCientifico(${c.id})">delete</button>` : ""}
         `;
@@ -164,6 +164,44 @@ async function cargarCientificos() {
   }
 }
 
+// Modificado para la implementacion de la api
+async function cargarEntidades() {
+  console.log("▶️ Ejecutando cargarEntidades()");
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/entities');
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    const result = await response.json();
+    const entidades = result.entities.map(e => e.entity);
+
+    const contenedores = [
+      document.getElementById("contenedor-entidades-normal"),
+      document.getElementById("contenedor-entidades-lector"),
+      document.getElementById("contenedor-entidades-escritor")
+    ];
+
+    contenedores.forEach(contenedor => {
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
+
+      entidades.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+          <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.id}" />
+          <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
+          ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
+        `;
+        contenedor.appendChild(div);
+      });
+    });
+
+  } catch (error) {
+    console.error("❌ Error al cargar entidades:", error);
+    alert("No se pudieron cargar las entidades. Revisa la consola.");
+  }
+}
 
 
 function verCientifico(id) {
@@ -172,21 +210,22 @@ function verCientifico(id) {
 
 // Renderizar entidades dinámicamente
 function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = false) {
-    const contenedor = document.getElementById(contenedorID);
-    if (!contenedor) return;
-    contenedor.innerHTML = "";
+  const contenedor = document.getElementById(contenedorID);
+  if (!contenedor) return;
+  contenedor.innerHTML = "";
 
-    entidades.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "elemento-datos";
-        div.innerHTML = `
-        <img src="${e.imagen}" alt="${e.nombre}" />
-        <a href="entidad.html" onclick="verEntidad('${e.nombre}')">${e.nombre}</a>
-        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad('${e.nombre}')">delete</button>` : ""}
-      `;
-        contenedor.appendChild(div);
-    });
+  entidades.forEach(e => {
+    const div = document.createElement("div");
+    div.className = "elemento-datos";
+    div.innerHTML = `
+      <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
+      <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
+      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
+    `;
+    contenedor.appendChild(div);
+  });
 }
+
 
 
 // Eliminar producto
@@ -237,6 +276,10 @@ DatosApp.obtenerProductos().then(productos => {
 
 //cientificos con API
 cargarCientificos();
+
+//entidades con API
+cargarEntidades();
+
 
 DatosApp.obtenerEntidades().then(entidades => {
     renderizarListaEntidades(entidades, 'contenedor-entidades-normal');
