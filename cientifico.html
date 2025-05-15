@@ -34,19 +34,15 @@
       contenedor.innerHTML = `
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${cientifico.name}</h1>
-          <img src="${cientifico.image}" alt="${cientifico.name}" class="imagen-wiki" />
+          <img src="${cientifico.imageUrl}" alt="${cientifico.name}" class="imagen-wiki" />
           ${puedeEditar ? `<button class="boton-editar" onclick="editarCientificoDesdeVista()">Editar datos</button>` : ""}
         </header>
-
-        <section class="descripcion-wiki">
-          <p class="intro-wiki">${cientifico.intro || ''}</p>
-        </section>
 
         <section class="datos-wiki">
           <table>
             <tr><th>Fecha de nacimiento</th><td>${cientifico.birthDate}</td></tr>
             <tr><th>Fecha de fallecimiento</th><td>${cientifico.deathDate}</td></tr>
-            <tr><th>Wiki</th><td><a href="${cientifico.wiki}" target="_blank">Ver en Wikipedia</a></td></tr>
+            <tr><th>Wiki</th><td><a href="${cientifico.wikiUrl}" target="_blank">Ver en Wikipedia</a></td></tr>
           </table>
         </section>
 
