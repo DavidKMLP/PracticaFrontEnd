@@ -38,23 +38,28 @@ function mostrarVistaPorRol(usuario) {
         document.getElementById('vista-lector').style.display = 'block';
         DatosApp.obtenerProductos().then(productos => {
             renderizarListaProductos(productos, 'contenedor-productos-lector');
-          });
-        
-          DatosApp.obtenerCientificos().then(cientificos => {
+        });
+
+        /*DatosApp.obtenerCientificos().then(cientificos => {
             renderizarListaCientificos(cientificos, 'contenedor-cientificos-lector');
-          });
-        
-          DatosApp.obtenerEntidades().then(entidades => {
+        });*/
+        cargarCientificos();
+
+
+        DatosApp.obtenerEntidades().then(entidades => {
             renderizarListaEntidades(entidades, 'contenedor-entidades-lector');
-          });
+        });
     } else if (usuario.rol === 'escritor') {
         document.getElementById('vista-escritor').style.display = 'block';
         DatosApp.obtenerProductos().then(productos => {
             renderizarListaProductos(productos, 'contenedor-productos-escritor', true);
         });
+        /*
         DatosApp.obtenerCientificos().then(c => {
             renderizarListaCientificos(c, 'contenedor-cientificos-escritor', true);
-        });
+        });*/
+        cargarCientificos();
+
 
         DatosApp.obtenerEntidades().then(e => {
             renderizarListaEntidades(e, 'contenedor-entidades-escritor', true);
@@ -95,7 +100,8 @@ function renderizarListaProductos(productos, contenedorID, mostrarBotones = fals
         contenedor.appendChild(div);
     });
 }
-// Renderizar cientificos dinámicamente
+
+// Renderizar cientificos dinámicamente con API
 function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = false) {
     const contenedor = document.getElementById(contenedorID);
     if (!contenedor) return;
@@ -105,13 +111,65 @@ function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = 
         const div = document.createElement("div");
         div.className = "elemento-datos";
         div.innerHTML = `
-        <img src="${c.imagen}" alt="${c.nombre}" />
-        <a href="cientifico.html" onclick="verCientifico('${c.nombre}')">${c.nombre}</a>
-        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarCientifico('${c.nombre}')">delete</button>` : ""}
+        <img src="${c.imagen}" alt="${c.name}" />
+        <a href="cientifico.html" onclick="verCientifico('${c.id}')">${c.name}</a>
+        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarCientifico('${c.id}')">delete</button>` : ""}
       `;
         contenedor.appendChild(div);
     });
 }
+
+//Implemntacion con API y AJAX
+async function cargarCientificos() {
+  console.log("▶️ Ejecutando cargarCientificos()");
+
+  try {
+    const response = await fetch('http://127.0.0.1:8000/api/v1/persons');
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    const result = await response.json();
+    console.log("Respuesta cruda de la API:", result);//debug
+
+    // Extraer el array de personas desde result.persons
+    const cientificos = result.persons.map(p => p.person);
+
+    const contenedores = [
+      document.getElementById("contenedor-cientificos-normal"),
+      document.getElementById("contenedor-cientificos-lector"),
+      document.getElementById("contenedor-cientificos-escritor")
+    ];
+
+    contenedores.forEach(contenedor => {
+      if (!contenedor) return;
+      contenedor.innerHTML = "";
+
+      cientificos.forEach(c => {
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+          <img src="${c.image || 'img/default.jpg'}" alt="${c.id}" />
+          <a href="cientifico.html" onclick="verCientifico(${c.id})">${c.name}</a>
+          ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarCientifico(${c.id})">delete</button>` : ""}
+        `;
+        contenedor.appendChild(div);
+      });
+    });
+
+  } catch (error) {
+    console.error("Error al cargar científicos:", error);
+    alert("No se pudieron cargar los científicos. Revisa la consola.");
+  }
+}
+
+
+
+function verCientifico(id) {
+    localStorage.setItem("cientificoSeleccionadoId", id);
+}
+
 // Renderizar entidades dinámicamente
 function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = false) {
     const contenedor = document.getElementById(contenedorID);
@@ -142,30 +200,28 @@ async function eliminarProducto(nombre) {
 
 async function eliminarCientifico(nombre) {
     if (confirm(`¿Eliminar al científico "${nombre}"?`)) {
-      const datos = await DatosApp.cargarDatos();
-      datos.cientificos = datos.cientificos.filter(c => c.nombre !== nombre);
-      DatosApp.guardarDatos(datos);
-      renderizarListaCientificos(datos.cientificos, 'contenedor-cientificos-escritor', true);
+        const datos = await DatosApp.cargarDatos();
+        datos.cientificos = datos.cientificos.filter(c => c.nombre !== nombre);
+        DatosApp.guardarDatos(datos);
+        renderizarListaCientificos(datos.cientificos, 'contenedor-cientificos-escritor', true);
     }
-  }
-  
-  async function eliminarEntidad(nombre) {
+}
+
+async function eliminarEntidad(nombre) {
     if (confirm(`¿Eliminar la entidad "${nombre}"?`)) {
-      const datos = await DatosApp.cargarDatos();
-      datos.entidades = datos.entidades.filter(e => e.nombre !== nombre);
-      DatosApp.guardarDatos(datos);
-      renderizarListaEntidades(datos.entidades, 'contenedor-entidades-escritor', true);
+        const datos = await DatosApp.cargarDatos();
+        datos.entidades = datos.entidades.filter(e => e.nombre !== nombre);
+        DatosApp.guardarDatos(datos);
+        renderizarListaEntidades(datos.entidades, 'contenedor-entidades-escritor', true);
     }
-  }
-  
+}
+
 
 // Navegación entre vistas
 function verProducto(nombre) {
     localStorage.setItem("productoSeleccionado", nombre);
 }
-function verCientifico(nombre) {
-    localStorage.setItem("cientificoSeleccionado", nombre);
-}
+
 function verEntidad(nombre) {
     localStorage.setItem("entidadSeleccionada", nombre);
 }
@@ -179,9 +235,8 @@ DatosApp.obtenerProductos().then(productos => {
     renderizarListaProductos(productos, 'contenedor-productos-normal');
 });
 
-DatosApp.obtenerCientificos().then(cientificos => {
-    renderizarListaCientificos(cientificos, 'contenedor-cientificos-normal');
-});
+//cientificos con API
+cargarCientificos();
 
 DatosApp.obtenerEntidades().then(entidades => {
     renderizarListaEntidades(entidades, 'contenedor-entidades-normal');

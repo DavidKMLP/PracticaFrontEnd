@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Detalle del Científico</title>
@@ -14,13 +15,13 @@
 
   <main class="pagina-producto" id="detalle-cientifico"></main>
 
-  <script src="js/datosCentralizados.js"></script>
   <script src="js/navegacion.js"></script>
   <script>
     let cientifico = null;
 
+    // Modificado para la implementacion de la api
     async function mostrarCientifico() {
-      cientifico = await DatosApp.obtenerCientificoSeleccionado();
+      cientifico = await obtenerCientificoDesdeAPI();
       const contenedor = document.getElementById('detalle-cientifico');
       const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
       const puedeEditar = sesion?.rol === "escritor";
@@ -32,8 +33,8 @@
 
       contenedor.innerHTML = `
         <header class="cabecera-wiki">
-          <h1 class="titulo-wiki">${cientifico.nombre}</h1>
-          <img src="${cientifico.imagen}" alt="${cientifico.nombre}" class="imagen-wiki" />
+          <h1 class="titulo-wiki">${cientifico.name}</h1>
+          <img src="${cientifico.image}" alt="${cientifico.name}" class="imagen-wiki" />
           ${puedeEditar ? `<button class="boton-editar" onclick="editarCientificoDesdeVista()">Editar datos</button>` : ""}
         </header>
 
@@ -43,8 +44,8 @@
 
         <section class="datos-wiki">
           <table>
-            <tr><th>Fecha de nacimiento</th><td>${cientifico.fechaCreacion}</td></tr>
-            <tr><th>Fecha de fallecimiento</th><td>${cientifico.fechaUtilidad}</td></tr>
+            <tr><th>Fecha de nacimiento</th><td>${cientifico.birthDate}</td></tr>
+            <tr><th>Fecha de fallecimiento</th><td>${cientifico.deathDate}</td></tr>
             <tr><th>Wiki</th><td><a href="${cientifico.wiki}" target="_blank">Ver en Wikipedia</a></td></tr>
           </table>
         </section>
@@ -57,54 +58,34 @@
           <div class="cuadricula-datos" id="productos-relacionados"></div>
         </section>
       `;
+    }
 
-      const entidades = await DatosApp.obtenerEntidades();
-      const productos = await DatosApp.obtenerProductos();
-      const contEntidades = document.getElementById('entidades-relacionadas');
-      const contProductos = document.getElementById('productos-relacionados');
+    // Modificado para la implementacion de la api
+    async function obtenerCientificoDesdeAPI() {
+      const id = localStorage.getItem("cientificoSeleccionadoId");
+      if (!id) return null;
 
-      if (cientifico.entidades?.length > 0) {
-        cientifico.entidades.forEach(nombre => {
-          const entidad = entidades.find(e => e.nombre === nombre);
-          if (entidad) {
-            const div = document.createElement("div");
-            div.className = "elemento-datos";
-            div.innerHTML = `
-              <img src="${entidad.imagen}" alt="${entidad.nombre}" />
-              <a href="entidad.html" onclick="verEntidad('${entidad.nombre}')">${entidad.nombre}</a>
-            `;
-            contEntidades.appendChild(div);
-          }
-        });
-      } else {
-        contEntidades.innerHTML = "<p>No hay entidades relacionadas.</p>";
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`);
+      if (!response.ok) {
+        console.error("Error al obtener el científico por ID");
+        return null;
       }
 
-      const relacionados = productos.filter(p => p.personas?.includes(cientifico.nombre));
-      if (relacionados.length > 0) {
-        relacionados.forEach(p => {
-          const div = document.createElement("div");
-          div.className = "elemento-datos";
-          div.innerHTML = `
-            <img src="${p.imagen}" alt="${p.nombre}" />
-            <a href="producto.html" onclick="verProducto('${p.nombre}')">${p.nombre}</a>
-          `;
-          contProductos.appendChild(div);
-        });
-      } else {
-        contProductos.innerHTML = "<p>No hay productos relacionados.</p>";
-      }
+      const result = await response.json();
+      return result.person;
     }
 
     function editarCientificoDesdeVista() {
-      localStorage.setItem("cientificoEditando", cientifico.nombre);
+      localStorage.setItem("cientificoEditando", cientifico.name);
       window.location.href = "editar-cientifico.html";
     }
 
     mostrarCientifico();
   </script>
+
   <footer class="footer-ejemplo">
     <h2>Proyecto Front End David Lew Pérez 2025</h2>
   </footer>
 </body>
+
 </html>
