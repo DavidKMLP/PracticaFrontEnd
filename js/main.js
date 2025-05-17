@@ -1,14 +1,11 @@
-const usuarios = [
-    { usuario: 'x', contrasena: 'x', rol: 'escritor' },
-    { usuario: 'y', contrasena: 'y', rol: 'escritor' },
-    { usuario: 'z', contrasena: 'z', rol: 'escritor' }
-];
 
 //Guarda sesion
 const sesionActiva = JSON.parse(localStorage.getItem("usuarioLogueado"));
 if (sesionActiva) {
     mostrarVistaPorRol(sesionActiva);
 }
+
+let access_token = null;
 
 // Inicio de sesión
 document.getElementById('formulario-inicio-sesion').addEventListener('submit', async function (event) {
@@ -17,13 +14,47 @@ document.getElementById('formulario-inicio-sesion').addEventListener('submit', a
     const usuarioInput = document.getElementById('usuario').value.trim();
     const contrasenaInput = document.getElementById('contrasena').value.trim();
 
-    const usuarioEncontrado = usuarios.find(u => u.usuario === usuarioInput && u.contrasena === contrasenaInput);
+    try {
+        //Obtenemos el Jwt token
+        const response = await fetch('http://127.0.0.1:8000/access_token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: usuarioInput,
+                password: contrasenaInput
+            })
+        });
 
-    if (usuarioEncontrado) {
-        localStorage.setItem("usuarioLogueado", JSON.stringify(usuarioEncontrado));
-        mostrarVistaPorRol(usuarioEncontrado);
-    } else {
-        alert('Usuario o contraseña incorrectos. Intenta de nuevo.');
+        //Mensaje de error
+        if (!response.ok) {
+            throw new Error("Credenciales incorrectas o error del servidor.");
+        }
+        
+        const data = await response.json();
+        
+        //console.log("Token recibido:", data);//debug
+        accessToken = data.access_token;
+
+        //Decodifico el jwt para extraer el scope y el nombre del user(verificado usando jwt.io)
+        
+        const decoded = JSON.parse(atob(accessToken.split('.')[1]));
+        const scopes = decoded.scopes || [];
+        const usernameFromToken = decoded.sub;
+
+        // 3. Validar el rol y mostrar vista
+        if (scopes.includes("writer")) {
+            mostrarVistaPorRol({ rol: "writer", username: usernameFromToken });
+        } else if (scopes.includes("reader")) {
+            mostrarVistaPorRol({ rol: "reader", username: usernameFromToken });
+        } else {//aqui gestionar lo de user INACTIVE -> bloquear acceso hasta que el admin lo valide
+            throw new Error("El token no contiene un rol válido.");
+        }
+
+    } catch (error) {
+        alert("Inicio de sesión fallido: " + error.message);
+        console.error("Error en login:", error);
     }
 });
 
@@ -34,39 +65,23 @@ function mostrarVistaPorRol(usuario) {
     document.getElementById('boton-cerrar-sesion').style.display = 'inline-block';
     document.getElementById('contenedor-logout').style.display = 'flex';
 
-    if (usuario.rol === 'lector') {
+    //Info del usuario recien conectado
+    const userInfo = document.getElementById('usuario-conectado');
+
+    if (userInfo) {
+        userInfo.textContent = `Conectado como: ${usuario.username}`;
+        userInfo.style.display = 'block';
+    }
+
+    if (usuario.rol === 'reader') {
         document.getElementById('vista-lector').style.display = 'block';
-
-        /*DatosApp.obtenerProductos().then(productos => {
-            renderizarListaProductos(productos, 'contenedor-productos-lector');
-        });*/
         cargarProductos();
-
-        /*DatosApp.obtenerCientificos().then(cientificos => {
-            renderizarListaCientificos(cientificos, 'contenedor-cientificos-lector');
-        });*/
         cargarCientificos();
-
-
-        /*DatosApp.obtenerEntidades().then(entidades => {
-            renderizarListaEntidades(entidades, 'contenedor-entidades-lector');
-        });*/
         cargarEntidades();
-    } else if (usuario.rol === 'escritor') {
+    } else if (usuario.rol === 'writer') {
         document.getElementById('vista-escritor').style.display = 'block';
-        /*DatosApp.obtenerProductos().then(productos => {
-            renderizarListaProductos(productos, 'contenedor-productos-escritor', true);
-        });*/
         cargarProductos();
-        /*
-        DatosApp.obtenerCientificos().then(c => {
-            renderizarListaCientificos(c, 'contenedor-cientificos-escritor', true);
-        });*/
         cargarCientificos();
-
-        /*DatosApp.obtenerEntidades().then(e => {
-            renderizarListaEntidades(e, 'contenedor-entidades-escritor', true);
-        });*/
         cargarEntidades();
 
     }
@@ -85,6 +100,8 @@ document.getElementById('boton-cerrar-sesion').addEventListener('click', functio
 
     document.getElementById('usuario').value = '';
     document.getElementById('contrasena').value = '';
+
+    document.getElementById('usuario-conectado').style.display = 'none';
 });
 
 // Renderizar productos dinámicamente
@@ -125,161 +142,161 @@ function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = 
 
 // Renderizar productos dinámicamente con API
 function renderizarListaProductos(productos, contenedorID, mostrarBotones = false) {
-  const contenedor = document.getElementById(contenedorID);
-  if (!contenedor) return;
-  contenedor.innerHTML = "";
+    const contenedor = document.getElementById(contenedorID);
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
 
-  productos.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "elemento-datos";
-    div.innerHTML = `
+    productos.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
       <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
       <a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>
       ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
     `;
-    contenedor.appendChild(div);
-  });
+        contenedor.appendChild(div);
+    });
 }
 
 // Renderizar entidades dinámicamente
 function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = false) {
-  const contenedor = document.getElementById(contenedorID);
-  if (!contenedor) return;
-  contenedor.innerHTML = "";
+    const contenedor = document.getElementById(contenedorID);
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
 
-  entidades.forEach(e => {
-    const div = document.createElement("div");
-    div.className = "elemento-datos";
-    div.innerHTML = `
+    entidades.forEach(e => {
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
       <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
       <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
       ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
     `;
-    contenedor.appendChild(div);
-  });
+        contenedor.appendChild(div);
+    });
 }
 
 //Modificado para la implementacion 
 async function cargarCientificos() {
-  console.log("▶️ Ejecutando cargarCientificos()");
+    console.log("▶️ Ejecutando cargarCientificos()");
 
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/persons');
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/persons');
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
 
-    const result = await response.json();
-    console.log("Respuesta cruda de la API:", result);//debug
+        const result = await response.json();
+        console.log("Respuesta cruda de la API:", result);//debug
 
-    // Extraer el array de personas desde result.persons
-    const cientificos = result.persons.map(p => p.person);
+        // Extraer el array de personas desde result.persons
+        const cientificos = result.persons.map(p => p.person);
 
-    const contenedores = [
-      document.getElementById("contenedor-cientificos-normal"),
-      document.getElementById("contenedor-cientificos-lector"),
-      document.getElementById("contenedor-cientificos-escritor")
-    ];
+        const contenedores = [
+            document.getElementById("contenedor-cientificos-normal"),
+            document.getElementById("contenedor-cientificos-lector"),
+            document.getElementById("contenedor-cientificos-escritor")
+        ];
 
-    contenedores.forEach(contenedor => {
-      if (!contenedor) return;
-      contenedor.innerHTML = "";
+        contenedores.forEach(contenedor => {
+            if (!contenedor) return;
+            contenedor.innerHTML = "";
 
-      cientificos.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "elemento-datos";
-        div.innerHTML = `
+            cientificos.forEach(c => {
+                const div = document.createElement("div");
+                div.className = "elemento-datos";
+                div.innerHTML = `
           <img src="${c.imageUrl || 'img/default.jpg'}" alt="${c.id}" />
           <a href="cientifico.html" onclick="verCientifico(${c.id})">${c.name}</a>
           ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarCientifico(${c.id})">delete</button>` : ""}
         `;
-        contenedor.appendChild(div);
-      });
-    });
+                contenedor.appendChild(div);
+            });
+        });
 
-  } catch (error) {
-    console.error("Error al cargar científicos:", error);
-    alert("No se pudieron cargar los científicos. Revisa la consola.");
-  }
+    } catch (error) {
+        console.error("Error al cargar científicos:", error);
+        alert("No se pudieron cargar los científicos. Revisa la consola.");
+    }
 }
 
 // Modificado para la implementacion de la api
 async function cargarEntidades() {
-  console.log("▶️ Ejecutando cargarEntidades()");
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/entities');
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-    const result = await response.json();
-    const entidades = result.entities.map(e => e.entity);
+    console.log("▶️ Ejecutando cargarEntidades()");
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/entities');
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        const result = await response.json();
+        const entidades = result.entities.map(e => e.entity);
 
-    const contenedores = [
-      document.getElementById("contenedor-entidades-normal"),
-      document.getElementById("contenedor-entidades-lector"),
-      document.getElementById("contenedor-entidades-escritor")
-    ];
+        const contenedores = [
+            document.getElementById("contenedor-entidades-normal"),
+            document.getElementById("contenedor-entidades-lector"),
+            document.getElementById("contenedor-entidades-escritor")
+        ];
 
-    contenedores.forEach(contenedor => {
-      if (!contenedor) return;
-      contenedor.innerHTML = "";
+        contenedores.forEach(contenedor => {
+            if (!contenedor) return;
+            contenedor.innerHTML = "";
 
-      entidades.forEach(e => {
-        const div = document.createElement("div");
-        div.className = "elemento-datos";
-        div.innerHTML = `
+            entidades.forEach(e => {
+                const div = document.createElement("div");
+                div.className = "elemento-datos";
+                div.innerHTML = `
           <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.id}" />
           <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
           ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
         `;
-        contenedor.appendChild(div);
-      });
-    });
+                contenedor.appendChild(div);
+            });
+        });
 
-  } catch (error) {
-    console.error("❌ Error al cargar entidades:", error);
-    alert("No se pudieron cargar las entidades. Revisa la consola.");
-  }
+    } catch (error) {
+        console.error("❌ Error al cargar entidades:", error);
+        alert("No se pudieron cargar las entidades. Revisa la consola.");
+    }
 }
 
 // Modificado para la implementacion de la api
 async function cargarProductos() {
-  console.log("▶️ Ejecutando cargarProductos()");
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/v1/products?order=id&ordering=ASC');
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-    const result = await response.json();
-    const productos = result.products.map(p => p.product);
+    console.log("▶️ Ejecutando cargarProductos()");
+    try {
+        const response = await fetch('http://127.0.0.1:8000/api/v1/products?order=id&ordering=ASC');
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        const result = await response.json();
+        const productos = result.products.map(p => p.product);
 
-    const contenedores = [
-      document.getElementById("contenedor-productos-normal"),
-      document.getElementById("contenedor-productos-lector"),
-      document.getElementById("contenedor-productos-escritor")
-    ];
+        const contenedores = [
+            document.getElementById("contenedor-productos-normal"),
+            document.getElementById("contenedor-productos-lector"),
+            document.getElementById("contenedor-productos-escritor")
+        ];
 
-    contenedores.forEach(contenedor => {
-      if (!contenedor) return;
-      contenedor.innerHTML = "";
+        contenedores.forEach(contenedor => {
+            if (!contenedor) return;
+            contenedor.innerHTML = "";
 
-      productos.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "elemento-datos";
-        div.innerHTML = `
+            productos.forEach(p => {
+                const div = document.createElement("div");
+                div.className = "elemento-datos";
+                div.innerHTML = `
           <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
           <a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>
           ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
         `;
-        contenedor.appendChild(div);
-      });
-    });
+                contenedor.appendChild(div);
+            });
+        });
 
-  } catch (error) {
-    console.error("❌ Error al cargar productos:", error);
-    alert("No se pudieron cargar los productos. Revisa la consola.");
-  }
+    } catch (error) {
+        console.error("❌ Error al cargar productos:", error);
+        alert("No se pudieron cargar los productos. Revisa la consola.");
+    }
 }
 
 // Eliminar
@@ -327,10 +344,6 @@ if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
     window.location.reload();
 }
 
-// Render productos, cientificos y entidades
-DatosApp.obtenerProductos().then(productos => {
-    renderizarListaProductos(productos, 'contenedor-productos-normal');
-});
 
 //cientificos con API
 cargarCientificos();
@@ -341,8 +354,4 @@ cargarEntidades();
 //productos con API
 cargarProductos();
 
-
-DatosApp.obtenerEntidades().then(entidades => {
-    renderizarListaEntidades(entidades, 'contenedor-entidades-normal');
-});
 

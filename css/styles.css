@@ -456,6 +456,14 @@ a {
     margin-top: 3rem;
     min-height: 220px;
   }
+
+  .info-usuario {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #8b86ff;
+  }
+  
+
   
   
   
