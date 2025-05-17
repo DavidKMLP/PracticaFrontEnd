@@ -29,7 +29,7 @@ document.getElementById('formulario-inicio-sesion').addEventListener('submit', a
 
         //Mensaje de error
         if (!response.ok) {
-            throw new Error("Credenciales incorrectas o error del servidor.");
+            throw new Error("Credenciales incorrectas o cuenta pendiente de validación por un administrador. Gracias por su paciencia");
         }
         
         const data = await response.json();
@@ -48,7 +48,7 @@ document.getElementById('formulario-inicio-sesion').addEventListener('submit', a
             mostrarVistaPorRol({ rol: "writer", username: usernameFromToken });
         } else if (scopes.includes("reader")) {
             mostrarVistaPorRol({ rol: "reader", username: usernameFromToken });
-        } else {//aqui gestionar lo de user INACTIVE -> bloquear acceso hasta que el admin lo valide
+        } else {
             throw new Error("El token no contiene un rol válido.");
         }
 
@@ -83,7 +83,14 @@ function mostrarVistaPorRol(usuario) {
         cargarProductos();
         cargarCientificos();
         cargarEntidades();
-
+    } else if (usuario.rol === 'inactive') {
+        alert('El usuario está inactivo hasta la validación de un administrador. Gracias por su paciencia.');
+        document.getElementById('formulario-inicio-sesion').style.display = 'block';
+        document.getElementById('boton-cerrar-sesion').style.display = 'none';
+        document.getElementById('contenedor-logout').style.display = 'none';
+        if (userInfo) {
+            userInfo.style.display = 'none';
+        }
     }
 }
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro de Usuario</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Registro de Usuario</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main>
+    <form id="formulario-registro" class="formulario">
+      <label>Email:
+        <input type="email" name="email" id="email" required />
+      </label>
+      <label>Nombre de usuario:
+        <input type="text" name="username" id="username" required />
+      </label>
+      <label>Contraseña:
+        <input type="password" name="password" id="password" required />
+      </label>
+      <button type="submit">Registrarse</button>
+    </form>
+
+    <p id="mensaje-registro" style="text-align: center;"></p>
+  </main>
+
+  <script>
+    const formulario = document.getElementById("formulario-registro");
+
+    formulario.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      const mensaje = document.getElementById("mensaje-registro");
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            username,
+            password
+          })
+        });
+
+        if (response.ok) {
+          mensaje.textContent = "Usuario registrado correctamente. Redirigiendo al login...";
+          mensaje.style.color = "lightgreen";
+          setTimeout(() => {
+            window.location.href = "index.html";
+          }, 2000);
+        } else {
+          const errorData = await response.json();
+          mensaje.textContent = "Error en el registro: " + (errorData.detail || response.statusText);
+          mensaje.style.color = "salmon";
+        }
+
+      } catch (error) {
+        mensaje.textContent = "Error al conectar con el servidor.";
+        mensaje.style.color = "salmon";
+      }
+    });
+  </script>
+</body>
+</html>
