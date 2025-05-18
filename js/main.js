@@ -361,13 +361,30 @@ async function eliminarProducto(id) {
   }
 }
 
-async function eliminarCientifico(nombre) {
-    if (confirm(`¿Eliminar al científico "${nombre}"?`)) {
-        const datos = await DatosApp.cargarDatos();
-        datos.cientificos = datos.cientificos.filter(c => c.nombre !== nombre);
-        DatosApp.guardarDatos(datos);
-        renderizarListaCientificos(datos.cientificos, 'contenedor-cientificos-escritor', true);
+async function eliminarCientifico(id) {
+  const token = localStorage.getItem("accessToken");
+
+  if (confirm("¿Estás seguro de que quieres eliminar este científico?")) {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      alert("Científico eliminado correctamente.");
+      cargarCientificos();
+    } catch (error) {
+      alert("Error al eliminar el científico.");
+      console.error("❌ Error en eliminarCientifico:", error);
     }
+  }
 }
 
 async function eliminarEntidad(nombre) {

@@ -14,84 +14,90 @@
   <main>
     <form id="formulario-editar-cientifico" class="formulario">
       <label>Nombre: <input type="text" name="nombre" required /></label>
-      <label>Fecha de nacimiento: <input type="text" name="fechaCreacion" required /></label>
-      <label>Fecha de fallecimiento: <input type="text" name="fechaUtilidad" required /></label>
+      <label>Fecha de nacimiento: <input type="date" name="fechaNacimiento" required /></label>
+      <label>Fecha de fallecimiento: <input type="date" name="fechaFallecimiento" required /></label>
       <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
-
-      <label>Introducción:
-        <textarea name="intro" rows="4" placeholder="Breve descripción..."></textarea>
-      </label>
-
-      <label>Entidades relacionadas (separadas por coma): <input type="text" name="entidades" /></label>
-      <label>Imagen nueva (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg,.jpeg,.png" /></label>
-
+      <label>Imagen (URL): <input type="url" name="imagen" required /></label>
       <button type="submit">Guardar Cambios</button>
     </form>
   </main>
 
-  <script src="js/datosCentralizados.js"></script>
   <script>
     const formulario = document.getElementById("formulario-editar-cientifico");
     let cientificoActual = null;
+    let etagCientifico = null;
 
     async function cargarCientifico() {
-      const nombre = localStorage.getItem("cientificoEditando");
-      const cientificos = await DatosApp.obtenerCientificos();
-      cientificoActual = cientificos.find(c => c.nombre === nombre);
-
-      if (!cientificoActual) {
-        alert("Científico no encontrado.");
+      const id = localStorage.getItem("cientificoSeleccionadoId");
+      if (!id) {
+        alert("ID del científico no definido.");
         window.location.href = "index.html";
         return;
       }
 
-      // Precargar datos en el formulario
-      formulario.nombre.value = cientificoActual.nombre;
-      formulario.fechaCreacion.value = cientificoActual.fechaCreacion;
-      formulario.fechaUtilidad.value = cientificoActual.fechaUtilidad;
-      formulario.wiki.value = cientificoActual.wiki;
-      formulario.intro.value = cientificoActual.intro || "";
-      formulario.entidades.value = cientificoActual.entidades?.join(", ") || "";
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`);
+        if (!response.ok) throw new Error("No se pudo obtener el científico");
+        etagCientifico = response.headers.get("etag");
+        const data = await response.json();
+        cientificoActual = data.person;
+
+        formulario.nombre.value = cientificoActual.name;
+        formulario.fechaNacimiento.value = cientificoActual.birthDate;
+        formulario.fechaFallecimiento.value = cientificoActual.deathDate;
+        formulario.wiki.value = cientificoActual.wikiUrl;
+        formulario.imagen.value = cientificoActual.imageUrl || "";
+
+      } catch (error) {
+        alert("Error al cargar los datos del científico.");
+        console.error(error);
+        window.location.href = "index.html";
+      }
     }
 
     formulario.addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const formData = new FormData(formulario);
-      const archivoImagen = formData.get("imagen");
+      const token = localStorage.getItem("accessToken");
 
-      const cientificos = await DatosApp.obtenerCientificos();
-      const index = cientificos.findIndex(c => c.nombre === cientificoActual.nombre);
-
-      const guardar = async (imagenNueva = cientificoActual.imagen) => {
-        const actualizado = {
-          nombre: formData.get("nombre"),
-          fechaCreacion: formData.get("fechaCreacion"),
-          fechaUtilidad: formData.get("fechaUtilidad"),
-          wiki: formData.get("wiki"),
-          intro: formData.get("intro"),
-          imagen: imagenNueva,
-          entidades: formData.get("entidades").split(',').map(e => e.trim()).filter(Boolean)
-        };
-
-        cientificos[index] = actualizado;
-        const datos = await DatosApp.cargarDatos();
-        datos.cientificos = cientificos;
-        DatosApp.guardarDatos(datos);
-
-        alert("Científico actualizado.");
-        window.location.href = "index.html";
+      const actualizado = {
+        name: formData.get("nombre"),
+        birthDate: formData.get("fechaNacimiento"),
+        deathDate: formData.get("fechaFallecimiento"),
+        wikiUrl: formData.get("wiki"),
+        imageUrl: formData.get("imagen")
       };
 
-      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = () => guardar(reader.result);
-        reader.readAsDataURL(archivoImagen);
-      } else {
-        await guardar();
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${cientificoActual.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "If-Match": etagCientifico
+          },
+          body: JSON.stringify(actualizado)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        alert("Científico actualizado correctamente.");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Error al actualizar el científico.");
+        console.error(error);
       }
     });
 
     cargarCientifico();
   </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
 </body>
 </html>

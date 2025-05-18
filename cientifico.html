@@ -34,7 +34,12 @@
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${cientifico.name}</h1>
           <img src="${cientifico.imageUrl}" alt="${cientifico.name}" class="imagen-wiki" />
-          ${puedeEditar ? `<button class="boton-editar" onclick="editarCientificoDesdeVista()">Editar datos</button>` : ""}
+          ${puedeEditar ? `
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <button class="boton-editar" onclick="editarCientificoDesdeVista()">Editar datos</button>
+          <button class="boton-editar" onclick="editarRelacionesCientifico()">Editar relaciones</button>
+          </div>
+          ` : ""}
         </header>
 
         <section class="datos-wiki">
@@ -53,6 +58,17 @@
           <div class="cuadricula-datos" id="productos-relacionados"></div>
         </section>
       `;
+        
+      // Renderizar productos relacionados
+      if (cientifico.products?.length > 0) {
+        cientifico.products.forEach(renderizarProductoRelacionado);
+      }
+
+      // Renderizar entidades relacionadas
+      if (cientifico.entities?.length > 0) {
+        cientifico.entities.forEach(renderizarEntidadRelacionada);
+      }
+
     }
 
     // Modificado para la implementacion de la api
@@ -75,7 +91,58 @@
       window.location.href = "editar-cientifico.html";
     }
 
+    function editarRelacionesCientifico() {
+      localStorage.setItem("cientificoSeleccionadoId", cientifico.id);
+      window.location.href = "editar-relaciones-cientifico.html";
+    }
+
+
     mostrarCientifico();
+
+    function verEntidad(id) {
+      localStorage.setItem("entidadSeleccionada", id);
+    }
+
+    function verProducto(id) {
+      localStorage.setItem("productoSeleccionado", id);
+    }
+
+    async function renderizarEntidadRelacionada(id) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`);
+        const data = await res.json();
+        const entidad = data.entity;
+
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+      <img src="${entidad.imageUrl || 'img/default.jpg'}" alt="${entidad.name}" />
+      <a href="entidad.html" onclick="verEntidad(${entidad.id})">${entidad.name}</a>
+    `;
+        document.getElementById("entidades-relacionadas").appendChild(div);
+      } catch (error) {
+        console.error(`Error al cargar entidad ID ${id}:`, error);
+      }
+    }
+
+    async function renderizarProductoRelacionado(id) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`);
+        const data = await res.json();
+        const producto = data.product;
+
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+      <img src="${producto.imageUrl || 'img/default.jpg'}" alt="${producto.name}" />
+      <a href="producto.html" onclick="verProducto(${producto.id})">${producto.name}</a>
+    `;
+        document.getElementById("productos-relacionados").appendChild(div);
+      } catch (error) {
+        console.error(`Error al cargar producto ID ${id}:`, error);
+      }
+    }
+
   </script>
 
   <footer class="footer-ejemplo">
