@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Editar Producto</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Editar Producto</h1>
@@ -17,15 +19,7 @@
       <label>Fecha de creación: <input type="text" name="fechaCreacion" required /></label>
       <label>Fecha de utilidad: <input type="text" name="fechaUtilidad" required /></label>
       <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
-
-      <label>Introducción:
-        <textarea name="intro" rows="4"></textarea>
-      </label>
-
-      <label>Personas (separadas por coma): <input type="text" name="personas" /></label>
-      <label>Entidades (separadas por coma): <input type="text" name="entidades" /></label>
-      <label>Imagen nueva (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg,.jpeg,.png" /></label>
-
+      <label>Imagen (URL): <input type="url" name="imagen" required /></label>
       <button type="submit">Guardar Cambios</button>
     </form>
   </main>
@@ -33,65 +27,78 @@
   <script src="js/datosCentralizados.js"></script>
   <script>
     const formulario = document.getElementById("formulario-editar-producto");
+
     let productoActual = null;
+    let etagProducto = null; //necesario para hacer PUT
 
     async function cargarProducto() {
-      const nombre = localStorage.getItem("productoEditando");
-      const productos = await DatosApp.obtenerProductos();
-      productoActual = productos.find(p => p.nombre === nombre);
-
-      if (!productoActual) {
-        alert("Producto no encontrado.");
+      const id = localStorage.getItem("productoEditandoId");
+      if (!id) {
+        alert("ID del producto no definido.");
         window.location.href = "index.html";
         return;
       }
 
-      // Precargar datos en el formulario
-      formulario.nombre.value = productoActual.nombre;
-      formulario.fechaCreacion.value = productoActual.fechaCreacion;
-      formulario.fechaUtilidad.value = productoActual.fechaUtilidad;
-      formulario.wiki.value = productoActual.wiki;
-      formulario.intro.value = productoActual.intro || "";
-      formulario.personas.value = productoActual.personas?.join(", ") || "";
-      formulario.entidades.value = productoActual.entidades?.join(", ") || "";
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`);
+        //if (!response.ok) throw new Error("No se pudo obtener el producto");
+
+        etagProducto = response.headers.get("etag"); // Guarda el ETag
+        const data = await response.json();
+        productoActual = data.product;
+
+        formulario.nombre.value = productoActual.name;
+        formulario.fechaCreacion.value = productoActual.birthDate;
+        formulario.fechaUtilidad.value = productoActual.deathDate;
+        formulario.wiki.value = productoActual.wikiUrl;
+        formulario.imagen.value = productoActual.imageUrl || "";
+      } catch (error) {
+        alert("Error al cargar el producto.");
+        console.error(error);
+        window.location.href = "index.html";
+      }
     }
 
     formulario.addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const formData = new FormData(formulario);
-      const archivoImagen = formData.get("imagen");
+      const token = localStorage.getItem("accessToken");
 
-      const productos = await DatosApp.obtenerProductos();
-      const index = productos.findIndex(p => p.nombre === productoActual.nombre);
-
-      const actualizar = (nuevaImagen = productoActual.imagen) => {
-        const actualizado = {
-          nombre: formData.get("nombre"),
-          fechaCreacion: formData.get("fechaCreacion"),
-          fechaUtilidad: formData.get("fechaUtilidad"),
-          wiki: formData.get("wiki"),
-          intro: formData.get("intro"),
-          imagen: nuevaImagen,
-          personas: formData.get("personas").split(",").map(p => p.trim()).filter(Boolean),
-          entidades: formData.get("entidades").split(",").map(e => e.trim()).filter(Boolean)
-        };
-
-        productos[index] = actualizado;
-        DatosApp.guardarDatos({ ...JSON.parse(localStorage.getItem("datosGuardados")), productos });
-        alert("Producto actualizado.");
-        window.location.href = "index.html";
+      const updatedData = {
+        name: formData.get("nombre"),
+        birthDate: formData.get("fechaCreacion"),
+        deathDate: formData.get("fechaUtilidad"),
+        wikiUrl: formData.get("wiki"),
+        imageUrl: formData.get("imagen")
       };
 
-      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = () => actualizar(reader.result);
-        reader.readAsDataURL(archivoImagen);
-      } else {
-        actualizar();
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/products/${productoActual.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "If-Match": etagProducto
+          },
+          body: JSON.stringify(updatedData)
+        });
+
+        if (!response.ok) {
+          const msg = await response.text();
+          throw new Error("Error al actualizar: " + msg);
+        }
+
+        alert("Producto actualizado correctamente.");
+        window.location.href = "index.html";
+      } catch (error) {
+        console.error("Error al actualizar producto:", error);
+        alert("No se pudo actualizar el producto. Revisa consola.");
       }
     });
 
     cargarProducto();
   </script>
 </body>
+
 </html>

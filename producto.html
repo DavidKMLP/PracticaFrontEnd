@@ -34,7 +34,13 @@
         <header class="cabecera-wiki">
           <h1 class="titulo-wiki">${producto.name}</h1>
           <img src="${producto.imageUrl}" alt="${producto.name}" class="imagen-wiki" />
-          ${puedeEditar ? `<button class="boton-editar" onclick="editarProductoDesdeVista()">Editar datos</button>` : ""}
+          ${puedeEditar ? `
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button class="boton-editar" onclick="editarProductoDesdeVista()">Editar datos</button>
+            <button class="boton-editar" onclick="editarRelacionesDesdeVista()">Editar relaciones</button>
+            </div>
+          ` : ""}
+
         </header>
 
         <section class="datos-wiki">
@@ -53,6 +59,16 @@
           <div class="cuadricula-datos" id="entidades-relacionadas"></div>
         </section>
       `;
+      // Mostrar científicos/personas relacionados
+      if (producto.persons?.length > 0) {
+        producto.persons.forEach(cargarRelacionPersona);
+      }
+
+      // Mostrar entidades relacionadas
+      if (producto.entities?.length > 0) {
+        producto.entities.forEach(cargarRelacionEntidad);
+      }
+
     }
 
     // Modificado para la implementacion de la api
@@ -72,15 +88,68 @@
 
     function editarProductoDesdeVista() {
       localStorage.setItem("productoEditando", producto.name);
+      localStorage.setItem("productoEditandoId", producto.id);
       window.location.href = "editar-producto.html";
     }
 
+    //Nuevo formulario
+    function editarRelacionesDesdeVista() {
+      localStorage.setItem("relacionTipo", "product");
+      localStorage.setItem("relacionId", producto.id);
+      window.location.href = "editar-relaciones.html";
+    }
+
     mostrarProducto();
+
+    function verEntidad(id) {
+      localStorage.setItem("entidadSeleccionada", id);
+    }
+
+    function verCientifico(id) {
+      localStorage.setItem("cientificoSeleccionadoId", id);
+    }
+
+    async function cargarRelacionPersona(id) {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`);
+        const data = await response.json();
+        const persona = data.person;
+
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+      <img src="${persona.imageUrl || 'img/default.jpg'}" alt="${persona.name}" />
+      <a href="cientifico.html" onclick="verCientifico(${persona.id})">${persona.name}</a>
+    `;
+        document.getElementById("cientificos-relacionados").appendChild(div);
+      } catch (error) {
+        console.error(`Error al cargar persona ID ${id}:`, error);
+      }
+    }
+
+    async function cargarRelacionEntidad(id) {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`);
+        const data = await response.json();
+        const entidad = data.entity;
+
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+      <img src="${entidad.imageUrl || 'img/default.jpg'}" alt="${entidad.name}" />
+      <a href="entidad.html" onclick="verEntidad(${entidad.id})">${entidad.name}</a>
+    `;
+        document.getElementById("entidades-relacionadas").appendChild(div);
+      } catch (error) {
+        console.error(`Error al cargar entidad ID ${id}:`, error);
+      }
+    }
+
   </script>
 
   <footer class="footer-ejemplo">
     <h2>Proyecto Front End David Lew Pérez 2025</h2>
-  </footer>  
+  </footer>
 </body>
 
 </html>
