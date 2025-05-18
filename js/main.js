@@ -151,7 +151,7 @@ function renderizarListaProductos(productos, contenedorID, mostrarBotones = fals
         div.innerHTML = `
         <img src="${producto.imagen}" alt="${producto.nombre}" />
         <a href="producto.html" onclick="verProducto('${producto.nombre}')">${producto.nombre}</a>
-        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto('${producto.nombre}')">delete</button>` : ""}
+        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto('${producto.id}')">delete</button>` : ""}
       `;
         contenedor.appendChild(div);
     });
@@ -335,12 +335,30 @@ async function cargarProductos() {
 }
 
 // Eliminar
-async function eliminarProducto(nombre) {
-    if (confirm(`¿Eliminar el producto "${nombre}"?`)) {
-        await DatosApp.eliminarProducto(nombre);
-        const productosActualizados = await DatosApp.obtenerProductos();
-        renderizarListaProductos(productosActualizados, 'contenedor-productos-escritor', true);
+async function eliminarProducto(id) {
+  const token = localStorage.getItem("accessToken");
+
+  if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      alert("Producto eliminado correctamente.");
+      cargarProductos(); // volver a cargar la lista actualizada
+    } catch (error) {
+      alert("Error al eliminar el producto.");
+      console.error("❌ Error en eliminarProducto:", error);
     }
+  }
 }
 
 async function eliminarCientifico(nombre) {
