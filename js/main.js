@@ -387,14 +387,32 @@ async function eliminarCientifico(id) {
   }
 }
 
-async function eliminarEntidad(nombre) {
-    if (confirm(`¿Eliminar la entidad "${nombre}"?`)) {
-        const datos = await DatosApp.cargarDatos();
-        datos.entidades = datos.entidades.filter(e => e.nombre !== nombre);
-        DatosApp.guardarDatos(datos);
-        renderizarListaEntidades(datos.entidades, 'contenedor-entidades-escritor', true);
+async function eliminarEntidad(id) {
+  const token = localStorage.getItem("accessToken");
+
+  if (confirm("¿Estás seguro de que quieres eliminar esta entidad?")) {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      alert("Entidad eliminada correctamente.");
+      cargarEntidades();
+    } catch (error) {
+      alert("Error al eliminar la entidad.");
+      console.error("❌ Error en eliminarEntidad:", error);
     }
+  }
 }
+
 
 
 // Navegación entre vistas

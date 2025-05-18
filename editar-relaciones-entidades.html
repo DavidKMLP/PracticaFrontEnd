@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Relaciones de la Entidad</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Editar Relaciones de la Entidad</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main class="formulario">
+    <section id="bloque-datos">
+      <p><strong>Entidad:</strong> <span id="nombre-elemento"></span></p>
+
+      <div class="seccion-datos">
+        <h3>Productos relacionados actualmente:</h3>
+        <ul id="lista-productos"></ul>
+
+        <label>Agregar productos:
+          <select id="select-productos">
+            <option value="">-- Ninguno --</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="seccion-datos">
+        <h3>Científicos relacionados actualmente:</h3>
+        <ul id="lista-cientificos"></ul>
+
+        <label>Agregar científicos:
+          <select id="select-cientificos">
+            <option value="">-- Ninguno --</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="seccion-datos">
+        <label>Tipo de operación:
+          <select id="tipo-operacion">
+            <option value="add">Añadir relación</option>
+            <option value="rem">Eliminar relación</option>
+          </select>
+        </label>
+      </div>
+
+      <button id="btn-guardar">Aplicar operación</button>
+    </section>
+  </main>
+
+  <script>
+    const id = localStorage.getItem("entidadSeleccionada");
+    const token = localStorage.getItem("accessToken");
+
+    const nombreElemento = document.getElementById("nombre-elemento");
+    const listaProductos = document.getElementById("lista-productos");
+    const listaCientificos = document.getElementById("lista-cientificos");
+    const selectProductos = document.getElementById("select-productos");
+    const selectCientificos = document.getElementById("select-cientificos");
+    const tipoOperacion = document.getElementById("tipo-operacion");
+    const btnGuardar = document.getElementById("btn-guardar");
+
+    let relacionesActuales = { products: [], persons: [] };
+
+    async function cargarDatos() {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`);
+        const data = await response.json();
+        const entidad = data.entity;
+        nombreElemento.textContent = entidad.name;
+        relacionesActuales = entidad;
+
+        entidad.products?.forEach(id => {
+          const li = document.createElement("li");
+          li.textContent = `ID ${id}`;
+          listaProductos.appendChild(li);
+        });
+
+        entidad.persons?.forEach(id => {
+          const li = document.createElement("li");
+          li.textContent = `ID ${id}`;
+          listaCientificos.appendChild(li);
+        });
+
+      } catch (error) {
+        alert("Error al cargar la entidad actual");
+        console.error(error);
+      }
+    }
+
+    async function cargarOpciones(url, select, tipoRelacion) {
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const lista = tipoRelacion === 'products' ? data.products : data.persons;
+
+        lista.forEach(item => {
+          const el = tipoRelacion === 'products' ? item.product : item.person;
+          const option = document.createElement("option");
+          option.value = el.id;
+          option.textContent = el.name;
+          select.appendChild(option);
+        });
+      } catch (e) {
+        console.error(`Error al cargar ${tipoRelacion}:`, e);
+      }
+    }
+
+    btnGuardar.addEventListener("click", async function () {
+      const productoId = parseInt(selectProductos.value);
+      const cientificoId = parseInt(selectCientificos.value);
+      const operacion = tipoOperacion.value;
+
+      const acciones = [];
+
+      if (!isNaN(productoId)) {
+        acciones.push(fetch(`http://127.0.0.1:8000/api/v1/entities/${id}/products/${operacion}/${productoId}`, {
+          method: "PUT",
+          headers: { "Authorization": `Bearer ${token}` }
+        }));
+      }
+
+      if (!isNaN(cientificoId)) {
+        acciones.push(fetch(`http://127.0.0.1:8000/api/v1/entities/${id}/persons/${operacion}/${cientificoId}`, {
+          method: "PUT",
+          headers: { "Authorization": `Bearer ${token}` }
+        }));
+      }
+
+      if (acciones.length === 0) {
+        alert("Selecciona al menos un producto o científico.");
+        return;
+      }
+
+      try {
+        await Promise.all(acciones);
+        alert("Operación completada correctamente.");
+        window.location.href = "index.html";
+      } catch (e) {
+        alert("Error al procesar la operación de relaciones");
+        console.error(e);
+      }
+    });
+
+    cargarDatos().then(() => {
+      cargarOpciones("http://127.0.0.1:8000/api/v1/products", selectProductos, "products");
+      cargarOpciones("http://127.0.0.1:8000/api/v1/persons", selectCientificos, "persons");
+    });
+  </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
+</body>
+</html>

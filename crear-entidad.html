@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Crear Entidad</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Crear Entidad</h1>
@@ -14,70 +16,58 @@
   <main>
     <form id="formulario-crear-entidad" class="formulario">
       <label>Nombre: <input type="text" name="nombre" required /></label>
-      <label>Fecha de creación: <input type="text" name="fechaCreacion" required /></label>
-      <label>Fecha de utilidad: <input type="text" name="fechaUtilidad" required /></label>
+      <label>Fecha de creación: <input type="date" name="fechaCreacion" required /></label>
+      <label>Fecha de utilidad: <input type="date" name="fechaUtilidad" required /></label>
       <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
-
-      <label>Introducción:
-        <textarea name="intro" rows="4" placeholder="Breve descripción..."></textarea>
-      </label>
-
-      <label>Científicos relacionados (separados por coma): <input type="text" name="cientificos" /></label>
-      <label>Imagen (.jpg o .png, opcional): <input type="file" name="imagen" accept=".jpg,.jpeg,.png" /></label>
-
+      <label>Imagen (URL): <input type="url" name="imagen" required /></label>
       <button type="submit">Guardar Entidad</button>
     </form>
   </main>
 
-  <script src="js/datosCentralizados.js"></script>
   <script>
     const formulario = document.getElementById("formulario-crear-entidad");
 
     formulario.addEventListener("submit", async function (e) {
       e.preventDefault();
+
       const formData = new FormData(formulario);
-      const archivoImagen = formData.get("imagen");
+      const token = localStorage.getItem("accessToken");
 
-      const cientificosRelacionados = formData.get("cientificos").split(',').map(c => c.trim()).filter(Boolean);
-      const todosCientificos = await DatosApp.obtenerCientificos();
+      const nuevaEntidad = {
+        name: formData.get("nombre"),
+        birthDate: formData.get("fechaCreacion"),
+        deathDate: formData.get("fechaUtilidad"),
+        wikiUrl: formData.get("wiki"),
+        imageUrl: formData.get("imagen")
+      };
 
-      const guardar = async (imagen = "") => {
-        const nuevaEntidad = {
-          nombre: formData.get("nombre"),
-          fechaCreacion: formData.get("fechaCreacion"),
-          fechaUtilidad: formData.get("fechaUtilidad"),
-          wiki: formData.get("wiki"),
-          intro: formData.get("intro"),
-          imagen,
-          cientificos: cientificosRelacionados
-        };
-
-        await DatosApp.guardarEntidad(nuevaEntidad);
-
-        // Asociar esta entidad a los científicos
-        cientificosRelacionados.forEach(nombre => {
-          const cientifico = todosCientificos.find(c => c.nombre === nombre);
-          if (cientifico && !cientifico.entidades.includes(nuevaEntidad.nombre)) {
-            cientifico.entidades.push(nuevaEntidad.nombre);
-          }
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/entities", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(nuevaEntidad)
         });
 
-        const datos = await DatosApp.cargarDatos();
-        datos.cientificos = todosCientificos;
-        await DatosApp.guardarDatos(datos);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
 
         alert("Entidad creada correctamente.");
         window.location.href = "index.html";
-      };
-
-      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = () => guardar(reader.result);
-        reader.readAsDataURL(archivoImagen);
-      } else {
-        await guardar();
+      } catch (error) {
+        alert("Error al crear la entidad.");
+        console.error(error);
       }
     });
   </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
 </body>
+
 </html>
