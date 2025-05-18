@@ -1,11 +1,26 @@
 
 //Guarda sesion
-const sesionActiva = JSON.parse(localStorage.getItem("usuarioLogueado"));
-if (sesionActiva) {
-    mostrarVistaPorRol(sesionActiva);
+let accessToken = localStorage.getItem("accessToken");
+if (accessToken) {
+    try {
+        const decoded = JSON.parse(atob(accessToken.split('.')[1]));
+        const scopes = decoded.scopes || [];
+        const usernameFromToken = decoded.sub;
+
+        if (scopes.includes("writer")) {
+            mostrarVistaPorRol({ rol: "writer", username: usernameFromToken });
+        } else if (scopes.includes("reader")) {
+            mostrarVistaPorRol({ rol: "reader", username: usernameFromToken });
+        }
+
+        const registroLink = document.getElementById("registro-link");
+        if (registroLink) registroLink.style.display = "none";
+    } catch (e) {
+        console.error("Token acceso inválido");
+        localStorage.removeItem("accessToken");
+    }
 }
 
-let access_token = null;
 
 // Inicio de sesión
 document.getElementById('formulario-inicio-sesion').addEventListener('submit', async function (event) {
@@ -31,17 +46,25 @@ document.getElementById('formulario-inicio-sesion').addEventListener('submit', a
         if (!response.ok) {
             throw new Error("Credenciales incorrectas o cuenta pendiente de validación por un administrador. Gracias por su paciencia");
         }
-        
+
         const data = await response.json();
-        
+
         //console.log("Token recibido:", data);//debug
         accessToken = data.access_token;
 
+        localStorage.setItem("accessToken", accessToken);
+
+
         //Decodifico el jwt para extraer el scope y el nombre del user(verificado usando jwt.io)
-        
+
         const decoded = JSON.parse(atob(accessToken.split('.')[1]));
         const scopes = decoded.scopes || [];
         const usernameFromToken = decoded.sub;
+
+        const role = scopes.includes("writer") ? "writer"
+            : scopes.includes("reader") ? "reader"
+                : "unknown";
+        localStorage.setItem("userRol", role);
 
         // 3. Validar el rol y mostrar vista
         if (scopes.includes("writer")) {
@@ -62,12 +85,12 @@ document.getElementById('formulario-inicio-sesion').addEventListener('submit', a
 function mostrarVistaPorRol(usuario) {
     document.getElementById('vista-usuario-normal').style.display = 'none';
     document.getElementById('formulario-inicio-sesion').style.display = 'none';
+    document.getElementById('registro-link').style.display = 'none';
     document.getElementById('boton-cerrar-sesion').style.display = 'inline-block';
     document.getElementById('contenedor-logout').style.display = 'flex';
 
-    //Info del usuario recien conectado
+    //Mostrar informacion usuario conectado
     const userInfo = document.getElementById('usuario-conectado');
-
     if (userInfo) {
         userInfo.textContent = `Conectado como: ${usuario.username}`;
         userInfo.style.display = 'block';
@@ -109,6 +132,11 @@ document.getElementById('boton-cerrar-sesion').addEventListener('click', functio
     document.getElementById('contrasena').value = '';
 
     document.getElementById('usuario-conectado').style.display = 'none';
+
+    //borrar localStorage
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("userRol");
+
 });
 
 // Renderizar productos dinámicamente
