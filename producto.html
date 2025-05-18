@@ -23,8 +23,7 @@
     async function mostrarProducto() {
       producto = await obtenerProductoDesdeAPI();
       const contenedor = document.getElementById('detalle-producto');
-      const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
-      const puedeEditar = sesion?.rol === "escritor";
+      const puedeEditar = localStorage.getItem("userRol") === "writer";
 
       if (!producto) {
         contenedor.innerHTML = "<p>Producto no encontrado.</p>";

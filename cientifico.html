@@ -23,8 +23,7 @@
     async function mostrarCientifico() {
       cientifico = await obtenerCientificoDesdeAPI();
       const contenedor = document.getElementById('detalle-cientifico');
-      const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
-      const puedeEditar = sesion?.rol === "escritor";
+      const puedeEditar = localStorage.getItem("userRol") === "writer";
 
       if (!cientifico) {
         contenedor.innerHTML = "<p>Científico no encontrado.</p>";

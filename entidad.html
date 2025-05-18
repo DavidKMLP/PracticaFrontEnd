@@ -21,8 +21,7 @@
     async function mostrarEntidad() {
       entidad = await obtenerEntidadDesdeAPI();
       const contenedor = document.getElementById('detalle-entidad');
-      const sesion = JSON.parse(localStorage.getItem("usuarioLogueado"));
-      const puedeEditar = sesion?.rol === "escritor";
+      const puedeEditar = localStorage.getItem("userRol") === "writer";
 
       if (!entidad) {
         contenedor.innerHTML = "<p>Entidad no encontrada.</p>";
