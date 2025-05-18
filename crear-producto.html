@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Crear Producto</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Crear Producto</h1>
@@ -14,61 +16,59 @@
   <main>
     <form id="formulario-crear-producto" class="formulario">
       <label>Nombre: <input type="text" name="nombre" required /></label>
-      <label>Fecha de creación: <input type="text" name="fechaCreacion" required /></label>
-      <label>Fecha de utilidad: <input type="text" name="fechaUtilidad" required /></label>
+      <label>Fecha de creación: <input type="date" name="fechaCreacion" required /></label>
+      <label>Fecha de utilidad: <input type="date" name="fechaUtilidad" required /></label>
       <label>Wikipedia (URL): <input type="url" name="wiki" required /></label>
-
-      <label>Introducción:
-        <textarea name="intro" rows="4" placeholder="Breve descripción del producto..."></textarea>
-      </label>
-
-      <label>Personas (separadas por coma): <input type="text" name="personas" /></label>
-      <label>Entidades (separadas por coma): <input type="text" name="entidades" /></label>
-      <label>Imagen del producto (.jpg o .png, opcional):
-        <input type="file" name="imagen" accept=".jpg, .jpeg, .png" />
-      </label>
+      <label>Imagen (URL): <input type="url" name="imagen" required /></label>
       <button type="submit">Guardar Producto</button>
     </form>
+
   </main>
 
-  <script src="js/datosCentralizados.js"></script>
+
   <script>
     const formulario = document.getElementById("formulario-crear-producto");
 
-    formulario.addEventListener("submit", function (e) {
+    formulario.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const formData = new FormData(formulario);
-      const archivoImagen = formData.get("imagen");
+      const token = localStorage.getItem("accessToken");
 
-      const guardar = (imagenFinal = "") => {
-        const nuevoProducto = {
-          nombre: formData.get("nombre"),
-          fechaCreacion: formData.get("fechaCreacion"),
-          fechaUtilidad: formData.get("fechaUtilidad"),
-          wiki: formData.get("wiki"),
-          intro: formData.get("intro"),
-          imagen: imagenFinal,
-          personas: formData.get("personas")?.split(',').map(p => p.trim()).filter(Boolean) || [],
-          entidades: formData.get("entidades")?.split(',').map(e => e.trim()).filter(Boolean) || []
-        };
-
-        DatosApp.guardarProducto(nuevoProducto).then(() => {
-          alert("Producto creado correctamente.");
-          window.location.href = "index.html";
-        });
+      const nuevoProducto = {
+        name: formData.get("nombre"),
+        birthDate: formData.get("fechaCreacion"),
+        deathDate: formData.get("fechaUtilidad"),
+        imageUrl: formData.get("imagen"),
+        wikiUrl: formData.get("wiki"),
+        url: ""  //No requerido
       };
 
-      if (archivoImagen && archivoImagen.size > 0 && archivoImagen.type.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = function () {
-          guardar(reader.result);
-        };
-        reader.readAsDataURL(archivoImagen);
-      } else {
-        guardar();
+      console.log("➡️ Enviando producto:", nuevoProducto);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/products", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(nuevoProducto)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        alert("Producto creado correctamente.");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Error al crear el producto.");
+        console.error(error);
       }
     });
   </script>
 </body>
+
 </html>
