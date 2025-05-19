@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Gestión de Usuarios</h1>
+        <a href="index.html" class="boton-volver">← Volver</a>
+    </header>
+
+    <main class="formulario">
+        <table class="tabla-usuarios">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-usuarios-body"></tbody>
+        </table>
+
+        <div id="formulario-edicion" style="display:none; margin-top: 2rem;">
+            <h3>Editar usuario</h3>
+            <form id="formulario-usuario" class="formulario">
+                <input type="hidden" name="id">
+                <label>Usuario: <input type="text" name="username" required></label>
+                <label>Email: <input type="email" name="email" required></label>
+                <label>Contraseña: <input type="password" name="password" required></label>
+                <label>Rol:
+                    <select name="role" required>
+                        <option value="READER">READER</option>
+                        <option value="WRITER">WRITER</option>
+                        <option value="INACTIVE">INACTIVE</option>
+                    </select>
+                </label>
+                <button type="submit">Guardar cambios</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const token = localStorage.getItem("accessToken");
+        const tbody = document.getElementById("tabla-usuarios-body");
+        const formulario = document.getElementById("formulario-usuario");
+        const formularioContenedor = document.getElementById("formulario-edicion");
+        let etagUsuario = null;
+
+        async function cargarUsuarios() {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/api/v1/users", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                tbody.innerHTML = "";
+
+                data.users.forEach(obj => {
+                    const user = obj.user;
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.username}</td>
+            <td>${user.role}</td>
+            <td>
+              <button onclick="editarUsuario(${user.id})">Editar</button>
+              <button onclick="eliminarUsuario(${user.id})">Eliminar</button>
+            </td>
+          `;
+                    tbody.appendChild(tr);
+                });
+            } catch {
+                alert("Error al cargar usuarios");
+            }
+        }
+
+        window.editarUsuario = async function (id) {
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "If-Match": "*"
+                    }
+                });
+
+                if (!res.ok) throw new Error(await res.text());
+                etagUsuario = res.headers.get("etag");
+
+                const data = await res.json();
+                const user = data.user;
+
+                formularioContenedor.style.display = "block";
+                formulario.id.value = user.id;
+                formulario.username.value = user.username;
+                formulario.email.value = user.email;
+                formulario.password.value = "";
+                formulario.role.value = user.role;
+            } catch {
+                alert("Error al cargar el usuario.");
+            }
+        };
+
+        window.eliminarUsuario = async function (id) {
+            if (!confirm("¿Eliminar este usuario?")) return;
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${id}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                if (!res.ok) throw new Error(await res.text());
+                alert("Usuario eliminado correctamente.");
+                cargarUsuarios();
+            } catch {
+                alert("Error al eliminar el usuario.");
+            }
+        };
+
+        formulario.addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const userId = formulario.id.value;
+            const payload = {
+                username: formulario.username.value,
+                email: formulario.email.value,
+                password: formulario.password.value,
+                role: formulario.role.value
+            };
+
+            try {
+                const headers = new Headers();
+                headers.append("Accept", "application/json");
+                headers.append("If-Match", etagUsuario);
+                headers.append("Authorization", `Bearer ${token}`);
+                headers.append("Content-Type", "application/json");
+
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${userId}`, {
+                    method: "PUT",
+                    headers,
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) throw new Error(await res.text());
+
+                alert("Usuario actualizado correctamente.");
+                formularioContenedor.style.display = "none";
+                cargarUsuarios();
+            } catch {
+                alert("Error al actualizar usuario.");
+            }
+        });
+
+        cargarUsuarios();
+    </script>
+
+    <footer class="footer-ejemplo">
+        <h2>Proyecto Front End David Lew Pérez 2025</h2>
+    </footer>
+</body>
+
+</html>

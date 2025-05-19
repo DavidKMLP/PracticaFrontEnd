@@ -96,6 +96,18 @@ function mostrarVistaPorRol(usuario) {
         userInfo.style.display = 'block';
     }
 
+    //Gestion de usuarios
+    const botonUsuarios = document.getElementById("boton-gestion-usuarios");
+    if (usuario.rol === "writer") {
+        botonUsuarios.style.display = "inline-block";
+        botonUsuarios.onclick = () => {
+            window.location.href = "gestion-usuarios.html";
+        };
+    } else {
+        botonUsuarios.style.display = "none";
+    }
+
+
     if (usuario.rol === 'reader') {
         document.getElementById('vista-lector').style.display = 'block';
         cargarProductos();
@@ -132,10 +144,15 @@ document.getElementById('boton-cerrar-sesion').addEventListener('click', functio
     document.getElementById('contrasena').value = '';
 
     document.getElementById('usuario-conectado').style.display = 'none';
+    document.getElementById("boton-gestion-usuarios").style.display = "none";
+
 
     //borrar localStorage
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userRol");
+
+    document.getElementById("registro-link").style.display = "block";
+
 
 });
 
@@ -336,81 +353,81 @@ async function cargarProductos() {
 
 // Eliminar
 async function eliminarProducto(id) {
-  const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
-  if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
+    if (confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            alert("Producto eliminado correctamente.");
+            cargarProductos(); // volver a cargar la lista actualizada
+        } catch (error) {
+            alert("Error al eliminar el producto.");
+            console.error("❌ Error en eliminarProducto:", error);
         }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      alert("Producto eliminado correctamente.");
-      cargarProductos(); // volver a cargar la lista actualizada
-    } catch (error) {
-      alert("Error al eliminar el producto.");
-      console.error("❌ Error en eliminarProducto:", error);
     }
-  }
 }
 
 async function eliminarCientifico(id) {
-  const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
-  if (confirm("¿Estás seguro de que quieres eliminar este científico?")) {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
+    if (confirm("¿Estás seguro de que quieres eliminar este científico?")) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            alert("Científico eliminado correctamente.");
+            cargarCientificos();
+        } catch (error) {
+            alert("Error al eliminar el científico.");
+            console.error("❌ Error en eliminarCientifico:", error);
         }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      alert("Científico eliminado correctamente.");
-      cargarCientificos();
-    } catch (error) {
-      alert("Error al eliminar el científico.");
-      console.error("❌ Error en eliminarCientifico:", error);
     }
-  }
 }
 
 async function eliminarEntidad(id) {
-  const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
-  if (confirm("¿Estás seguro de que quieres eliminar esta entidad?")) {
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
+    if (confirm("¿Estás seguro de que quieres eliminar esta entidad?")) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            alert("Entidad eliminada correctamente.");
+            cargarEntidades();
+        } catch (error) {
+            alert("Error al eliminar la entidad.");
+            console.error("❌ Error en eliminarEntidad:", error);
         }
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      alert("Entidad eliminada correctamente.");
-      cargarEntidades();
-    } catch (error) {
-      alert("Error al eliminar la entidad.");
-      console.error("❌ Error en eliminarEntidad:", error);
     }
-  }
 }
 
 

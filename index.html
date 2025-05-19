@@ -1,44 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Anales de la Ciencia</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
-  <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding-bottom: 1rem;">
-  <h1 style="color: #8b86ff;">Anales de la Ciencia</h1>
+  <header
+    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding-bottom: 1rem;">
+    <h1 style="color: #8b86ff;">Anales de la Ciencia</h1>
 
-  <!-- Contenedor derecho que cambia al loguearse -->
-  <div id="header-derecha" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-    
-    <!-- Formulario de login (se oculta al loguear) -->
-    <form id="formulario-inicio-sesion" class="formulario-inicio-sesion">
-      <div class="grupo-formulario">
-        <label for="usuario">Usuario:</label>
-        <input type="text" id="usuario" name="usuario" required />
+    <!-- Contenedor derecho que cambia al loguearse -->
+    <div id="header-derecha" style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+
+      <!-- Formulario de login (se oculta al loguear) -->
+      <form id="formulario-inicio-sesion" class="formulario-inicio-sesion">
+        <div class="grupo-formulario">
+          <label for="usuario">Usuario:</label>
+          <input type="text" id="usuario" name="usuario" required />
+        </div>
+        <div class="grupo-formulario">
+          <label for="contrasena">Contraseña:</label>
+          <input type="password" id="contrasena" name="contrasena" required />
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      <!-- Registro -->
+      <div id="registro-link" style="margin-top: 0.5rem; align-self: flex-end;">
+        <span style="color: #fff;">¿No tiene cuenta? </span>
+        <a href="registroUser.html" style="color: #8b86ff; font-weight: bold;">Registrarse</a>
       </div>
-      <div class="grupo-formulario">
-        <label for="contrasena">Contraseña:</label>
-        <input type="password" id="contrasena" name="contrasena" required />
+
+
+
+      <!-- Contenedor de logout (visible al loguear) -->
+      <div id="contenedor-logout" class="formulario-inicio-sesion"
+        style="display: none; flex-direction: row; align-items: center; gap: 1rem;">
+        <p id="usuario-conectado" class="info-usuario" style="margin: 0;"></p>
+        <button id="boton-cerrar-sesion">Logout</button>
       </div>
-      <button type="submit">Login</button>
-    </form>
 
-    <!-- Enlace de registro -->
-    <div id="registro-link" style="font-size: 0.9rem;">
-      ¿No tiene cuenta? <a href="registroUser.html">Registrarse</a>
+      <!-- Botón de gestión de usuarios solo para writers -->
+      <button id="boton-gestion-usuarios" class="boton-editar" style="display: none;">Gestión de usuarios</button>
+
+
     </div>
-
-    <!-- Contenedor de logout (visible al loguear) -->
-    <div id="contenedor-logout" class="formulario-inicio-sesion" style="display: none; flex-direction: row; align-items: center; gap: 1rem;">
-      <p id="usuario-conectado" class="info-usuario" style="margin: 0;"></p>
-      <button id="boton-cerrar-sesion">Logout</button>
-    </div>
-
-  </div>
-</header>
+  </header>
 
 
   <!-- Vista usuario normal -->
@@ -107,7 +117,8 @@
   <footer class="footer-ejemplo">
     <h2>Proyecto Front End David Lew Pérez 2025</h2>
   </footer>
-  
+
   <script src="js/main.js"></script>
 </body>
+
 </html>
