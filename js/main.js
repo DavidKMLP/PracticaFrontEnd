@@ -156,24 +156,6 @@ document.getElementById('boton-cerrar-sesion').addEventListener('click', functio
 
 });
 
-// Renderizar productos dinámicamente
-function renderizarListaProductos(productos, contenedorID, mostrarBotones = false) {
-    const contenedor = document.getElementById(contenedorID);
-    if (!contenedor) return;
-    contenedor.innerHTML = "";
-
-    productos.forEach(producto => {
-        const div = document.createElement("div");
-        div.className = "elemento-datos";
-        div.innerHTML = `
-        <img src="${producto.imagen}" alt="${producto.nombre}" />
-        <a href="producto.html" onclick="verProducto('${producto.nombre}')">${producto.nombre}</a>
-        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto('${producto.id}')">delete</button>` : ""}
-      `;
-        contenedor.appendChild(div);
-    });
-}
-
 // Renderizar cientificos dinámicamente con API
 function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = false) {
     const contenedor = document.getElementById(contenedorID);
@@ -192,19 +174,27 @@ function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = 
     });
 }
 
-// Renderizar productos dinámicamente con API
+// Renderizar cientificos dinámicamente con API
 function renderizarListaProductos(productos, contenedorID, mostrarBotones = false) {
     const contenedor = document.getElementById(contenedorID);
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
-    productos.forEach(p => {
+    const token = localStorage.getItem("accessToken");
+    const isAutenticado = !!token;
+
+    productos.forEach(producto => {
         const div = document.createElement("div");
         div.className = "elemento-datos";
+
+        const nombre = isAutenticado
+            ? `<a href="producto.html" onclick="verProducto(${producto.id})">${producto.name}</a>`
+            : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${producto.name}</span>`;
+
         div.innerHTML = `
-      <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
-      <a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>
-      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
+      <img src="${producto.imageUrl || 'img/default.jpg'}" alt="${producto.name}" />
+      ${nombre}
+      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto(${producto.id})">delete</button>` : ""}
     `;
         contenedor.appendChild(div);
     });
@@ -216,14 +206,22 @@ function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = fals
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
+    const token = localStorage.getItem("accessToken");
+    const isAutenticado = !!token;
+
     entidades.forEach(e => {
         const div = document.createElement("div");
         div.className = "elemento-datos";
+
+        const nombre = isAutenticado
+            ? `<a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>`
+            : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${e.name}</span>`;
+
         div.innerHTML = `
-      <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
-      <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
-      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
-    `;
+            <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
+            ${nombre}
+            ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
+        `;
         contenedor.appendChild(div);
     });
 }
@@ -281,6 +279,7 @@ async function cargarEntidades() {
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
+
         const result = await response.json();
         const entidades = result.entities.map(e => e.entity);
 
@@ -290,6 +289,9 @@ async function cargarEntidades() {
             document.getElementById("contenedor-entidades-escritor")
         ];
 
+        const token = localStorage.getItem("accessToken");
+        const isAutenticado = !!token;
+
         contenedores.forEach(contenedor => {
             if (!contenedor) return;
             contenedor.innerHTML = "";
@@ -297,11 +299,16 @@ async function cargarEntidades() {
             entidades.forEach(e => {
                 const div = document.createElement("div");
                 div.className = "elemento-datos";
+
+                const nombre = isAutenticado
+                    ? `<a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>`
+                    : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${e.name}</span>`;
+
                 div.innerHTML = `
-          <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.id}" />
-          <a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>
-          ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
-        `;
+                    <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
+                    ${nombre}
+                    ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
+                `;
                 contenedor.appendChild(div);
             });
         });
@@ -333,14 +340,22 @@ async function cargarProductos() {
             if (!contenedor) return;
             contenedor.innerHTML = "";
 
+            const token = localStorage.getItem("accessToken");
+            const isAutenticado = !!token;
+
             productos.forEach(p => {
                 const div = document.createElement("div");
                 div.className = "elemento-datos";
+
+                const nombre = isAutenticado
+                    ? `<a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>`
+                    : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${p.name}</span>`;
+
                 div.innerHTML = `
-          <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
-          <a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>
-          ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
-        `;
+      <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
+      ${nombre}
+      ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
+    `;
                 contenedor.appendChild(div);
             });
         });
