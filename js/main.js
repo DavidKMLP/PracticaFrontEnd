@@ -1,4 +1,3 @@
-
 //Guarda sesion
 let accessToken = localStorage.getItem("accessToken");
 if (accessToken) {
@@ -107,7 +106,6 @@ function mostrarVistaPorRol(usuario) {
         botonUsuarios.style.display = "none";
     }
 
-
     if (usuario.rol === 'reader') {
         document.getElementById('vista-lector').style.display = 'block';
         cargarProductos();
@@ -129,9 +127,29 @@ function mostrarVistaPorRol(usuario) {
     }
 }
 
+function restablecerVistaPorDefecto() {
+    const ids = [
+        "contenedor-productos-normal",
+        "contenedor-productos-lector",
+        "contenedor-productos-escritor",
+        "contenedor-cientificos-normal",
+        "contenedor-cientificos-lector",
+        "contenedor-cientificos-escritor",
+        "contenedor-entidades-normal",
+        "contenedor-entidades-lector",
+        "contenedor-entidades-escritor"
+    ];
+
+    ids.forEach(id => {
+        const contenedor = document.getElementById(id);
+        if (contenedor) contenedor.innerHTML = "";
+    });
+}
+
 // Cierre de sesión
 document.getElementById('boton-cerrar-sesion').addEventListener('click', function () {
-    localStorage.removeItem("usuarioLogueado");
+    //Restablecer vista a la de un usuario sin Registrar
+    restablecerVistaPorDefecto();
 
     document.getElementById('vista-usuario-normal').style.display = 'block';
     document.getElementById('vista-lector').style.display = 'none';
@@ -146,13 +164,16 @@ document.getElementById('boton-cerrar-sesion').addEventListener('click', functio
     document.getElementById('usuario-conectado').style.display = 'none';
     document.getElementById("boton-gestion-usuarios").style.display = "none";
 
-
     //borrar localStorage
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userRol");
 
     document.getElementById("registro-link").style.display = "block";
 
+    //Volver a cargar los elementos de la página
+    cargarProductos();
+    cargarCientificos();
+    cargarEntidades();
 
 });
 
@@ -162,14 +183,22 @@ function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = 
     if (!contenedor) return;
     contenedor.innerHTML = "";
 
+    const token = localStorage.getItem("accessToken");
+    const isAutenticado = !!token;
+
     cientificos.forEach(c => {
         const div = document.createElement("div");
         div.className = "elemento-datos";
+
+        const nombre = isAutenticado
+            ? `<a href="cientifico.html" onclick="verCientifico(${c.id})">${c.name}</a>`
+            : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${c.name}</span>`;
+
         div.innerHTML = `
-        <img src="${c.imagen}" alt="${c.name}" />
-        <a href="cientifico.html" onclick="verCientifico('${c.id}')">${c.name}</a>
-        ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarCientifico('${c.id}')">delete</button>` : ""}
-      `;
+            <img src="${c.imageUrl || 'img/default.jpg'}" alt="${c.name}" />
+            ${nombre}
+            ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarCientifico(${c.id})">delete</button>` : ""}
+        `;
         contenedor.appendChild(div);
     });
 }
@@ -226,50 +255,29 @@ function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = fals
     });
 }
 
-//Modificado para la implementacion 
+//Modificado para la implementacion de la API
 async function cargarCientificos() {
     console.log("▶️ Ejecutando cargarCientificos()");
 
     try {
         const response = await fetch('http://127.0.0.1:8000/api/v1/persons');
-
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("Respuesta cruda de la API:", result);//debug
-
-        // Extraer el array de personas desde result.persons
         const cientificos = result.persons.map(p => p.person);
 
-        const contenedores = [
-            document.getElementById("contenedor-cientificos-normal"),
-            document.getElementById("contenedor-cientificos-lector"),
-            document.getElementById("contenedor-cientificos-escritor")
-        ];
-
-        contenedores.forEach(contenedor => {
-            if (!contenedor) return;
-            contenedor.innerHTML = "";
-
-            cientificos.forEach(c => {
-                const div = document.createElement("div");
-                div.className = "elemento-datos";
-                div.innerHTML = `
-          <img src="${c.imageUrl || 'img/default.jpg'}" alt="${c.id}" />
-          <a href="cientifico.html" onclick="verCientifico(${c.id})">${c.name}</a>
-          ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarCientifico(${c.id})">delete</button>` : ""}
-        `;
-                contenedor.appendChild(div);
-            });
-        });
+        renderizarListaCientificos(cientificos, "contenedor-cientificos-normal", false);
+        renderizarListaCientificos(cientificos, "contenedor-cientificos-lector", false);
+        renderizarListaCientificos(cientificos, "contenedor-cientificos-escritor", true);
 
     } catch (error) {
-        console.error("Error al cargar científicos:", error);
+        console.error(" Error al cargar científicos:", error);
         alert("No se pudieron cargar los científicos. Revisa la consola.");
     }
 }
+
 
 // Modificado para la implementacion de la api
 async function cargarEntidades() {
@@ -283,42 +291,15 @@ async function cargarEntidades() {
         const result = await response.json();
         const entidades = result.entities.map(e => e.entity);
 
-        const contenedores = [
-            document.getElementById("contenedor-entidades-normal"),
-            document.getElementById("contenedor-entidades-lector"),
-            document.getElementById("contenedor-entidades-escritor")
-        ];
-
-        contenedores.forEach(contenedor => {
-            if (!contenedor) return;
-            contenedor.innerHTML = "";
-
-            const token = localStorage.getItem("accessToken");
-            const isAutenticado = !!token;
-
-            entidades.forEach(e => {
-                const div = document.createElement("div");
-                div.className = "elemento-datos";
-
-                const nombre = isAutenticado
-                    ? `<a href="entidad.html" onclick="verEntidad(${e.id})">${e.name}</a>`
-                    : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${e.name}</span>`;
-
-                div.innerHTML = `
-      <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
-      ${nombre}
-      ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
-    `;
-                contenedor.appendChild(div);
-            });
-        });
+        renderizarListaEntidades(entidades, "contenedor-entidades-normal", false);
+        renderizarListaEntidades(entidades, "contenedor-entidades-lector", false);
+        renderizarListaEntidades(entidades, "contenedor-entidades-escritor", true);
 
     } catch (error) {
-        console.error("❌ Error al cargar entidades:", error);
+        console.error(" Error al cargar entidades:", error);
         alert("No se pudieron cargar las entidades. Revisa la consola.");
     }
 }
-
 
 // Modificado para la implementacion de la api
 async function cargarProductos() {
@@ -328,41 +309,16 @@ async function cargarProductos() {
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
+
         const result = await response.json();
         const productos = result.products.map(p => p.product);
 
-        const contenedores = [
-            document.getElementById("contenedor-productos-normal"),
-            document.getElementById("contenedor-productos-lector"),
-            document.getElementById("contenedor-productos-escritor")
-        ];
-
-        contenedores.forEach(contenedor => {
-            if (!contenedor) return;
-            contenedor.innerHTML = "";
-
-            const token = localStorage.getItem("accessToken");
-            const isAutenticado = !!token;
-
-            productos.forEach(p => {
-                const div = document.createElement("div");
-                div.className = "elemento-datos";
-
-                const nombre = isAutenticado
-                    ? `<a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>`
-                    : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${p.name}</span>`;
-
-                div.innerHTML = `
-      <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
-      ${nombre}
-      ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
-    `;
-                contenedor.appendChild(div);
-            });
-        });
+        renderizarListaProductos(productos, "contenedor-productos-normal", false);
+        renderizarListaProductos(productos, "contenedor-productos-lector", false);
+        renderizarListaProductos(productos, "contenedor-productos-escritor", true);
 
     } catch (error) {
-        console.error("❌ Error al cargar productos:", error);
+        console.error(" Error al cargar productos:", error);
         alert("No se pudieron cargar los productos. Revisa la consola.");
     }
 }
@@ -389,7 +345,7 @@ async function eliminarProducto(id) {
             cargarProductos(); // volver a cargar la lista actualizada
         } catch (error) {
             alert("Error al eliminar el producto.");
-            console.error("❌ Error en eliminarProducto:", error);
+            console.error(" Error en eliminarProducto:", error);
         }
     }
 }
@@ -415,7 +371,7 @@ async function eliminarCientifico(id) {
             cargarCientificos();
         } catch (error) {
             alert("Error al eliminar el científico.");
-            console.error("❌ Error en eliminarCientifico:", error);
+            console.error(" Error en eliminarCientifico:", error);
         }
     }
 }
@@ -441,12 +397,10 @@ async function eliminarEntidad(id) {
             cargarEntidades();
         } catch (error) {
             alert("Error al eliminar la entidad.");
-            console.error("❌ Error en eliminarEntidad:", error);
+            console.error(" Error en eliminarEntidad:", error);
         }
     }
 }
-
-
 
 // Navegación entre vistas
 function verProducto(id) {
