@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Editar Relaciones de la Entidad</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Editar Relaciones de la Entidad</h1>
@@ -72,16 +74,30 @@
         nombreElemento.textContent = entidad.name;
         relacionesActuales = entidad;
 
-        entidad.products?.forEach(id => {
-          const li = document.createElement("li");
-          li.textContent = `ID ${id}`;
-          listaProductos.appendChild(li);
+        // Mostrar nombres de productos relacionados
+        entidad.products?.forEach(async id => {
+          try {
+            const res = await fetch(`http://127.0.0.1:8000/api/v1/products/${id}`);
+            const data = await res.json();
+            const li = document.createElement("li");
+            li.textContent = data.product.name;
+            listaProductos.appendChild(li);
+          } catch (e) {
+            console.error("Error al cargar nombre del producto:", e);
+          }
         });
 
-        entidad.persons?.forEach(id => {
-          const li = document.createElement("li");
-          li.textContent = `ID ${id}`;
-          listaCientificos.appendChild(li);
+        // Mostrar nombres de científicos relacionados
+        entidad.persons?.forEach(async id => {
+          try {
+            const res = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`);
+            const data = await res.json();
+            const li = document.createElement("li");
+            li.textContent = data.person.name;
+            listaCientificos.appendChild(li);
+          } catch (e) {
+            console.error("Error al cargar nombre del científico:", e);
+          }
         });
 
       } catch (error) {
@@ -154,4 +170,5 @@
     <h2>Proyecto Front End David Lew Pérez 2025</h2>
   </footer>
 </body>
+
 </html>

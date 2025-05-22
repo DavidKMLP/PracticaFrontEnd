@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Editar Relaciones</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Editar Relaciones</h1>
@@ -72,17 +74,32 @@
         nombreElemento.textContent = data.product.name;
         relacionesActuales = data.product;
 
-        data.product.persons?.forEach(id => {
-          const li = document.createElement("li");
-          li.textContent = `ID ${id}`;
-          listaPersonas.appendChild(li);
+        // Mostrar nombres de personas relacionadas
+        data.product.persons?.forEach(async id => {
+          try {
+            const res = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`);
+            const data = await res.json();
+            const li = document.createElement("li");
+            li.textContent = data.person.name;
+            listaPersonas.appendChild(li);
+          } catch (e) {
+            console.error("Error al cargar nombre de la persona:", e);
+          }
         });
 
-        data.product.entities?.forEach(id => {
-          const li = document.createElement("li");
-          li.textContent = `ID ${id}`;
-          listaEntidades.appendChild(li);
+        // Mostrar nombres de entidades relacionadas
+        data.product.entities?.forEach(async id => {
+          try {
+            const res = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`);
+            const data = await res.json();
+            const li = document.createElement("li");
+            li.textContent = data.entity.name;
+            listaEntidades.appendChild(li);
+          } catch (e) {
+            console.error("Error al cargar nombre de la entidad:", e);
+          }
         });
+
 
       } catch (error) {
         alert("Error al cargar el producto actual");
@@ -151,4 +168,5 @@
     <h2>Proyecto Front End David Lew Pérez 2025</h2>
   </footer>
 </body>
+
 </html>
