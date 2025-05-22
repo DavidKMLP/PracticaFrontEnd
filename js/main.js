@@ -174,7 +174,7 @@ function renderizarListaCientificos(cientificos, contenedorID, mostrarBotones = 
     });
 }
 
-// Renderizar cientificos dinámicamente con API
+// Renderizar productos dinámicamente con API
 function renderizarListaProductos(productos, contenedorID, mostrarBotones = false) {
     const contenedor = document.getElementById(contenedorID);
     if (!contenedor) return;
@@ -183,19 +183,19 @@ function renderizarListaProductos(productos, contenedorID, mostrarBotones = fals
     const token = localStorage.getItem("accessToken");
     const isAutenticado = !!token;
 
-    productos.forEach(producto => {
+    productos.forEach(p => {
         const div = document.createElement("div");
         div.className = "elemento-datos";
 
         const nombre = isAutenticado
-            ? `<a href="producto.html" onclick="verProducto(${producto.id})">${producto.name}</a>`
-            : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${producto.name}</span>`;
+            ? `<a href="producto.html" onclick="verProducto(${p.id})">${p.name}</a>`
+            : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${p.name}</span>`;
 
         div.innerHTML = `
-      <img src="${producto.imageUrl || 'img/default.jpg'}" alt="${producto.name}" />
-      ${nombre}
-      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto(${producto.id})">delete</button>` : ""}
-    `;
+            <img src="${p.imageUrl || 'img/default.jpg'}" alt="${p.name}" />
+            ${nombre}
+            ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarProducto(${p.id})">delete</button>` : ""}
+        `;
         contenedor.appendChild(div);
     });
 }
@@ -275,7 +275,7 @@ async function cargarCientificos() {
 async function cargarEntidades() {
     console.log("▶️ Ejecutando cargarEntidades()");
     try {
-        const response = await fetch('http://127.0.0.1:8000/api/v1/entities');
+        const response = await fetch('http://127.0.0.1:8000/api/v1/entities?order=id&ordering=ASC');
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
         }
@@ -289,12 +289,12 @@ async function cargarEntidades() {
             document.getElementById("contenedor-entidades-escritor")
         ];
 
-        const token = localStorage.getItem("accessToken");
-        const isAutenticado = !!token;
-
         contenedores.forEach(contenedor => {
             if (!contenedor) return;
             contenedor.innerHTML = "";
+
+            const token = localStorage.getItem("accessToken");
+            const isAutenticado = !!token;
 
             entidades.forEach(e => {
                 const div = document.createElement("div");
@@ -305,10 +305,10 @@ async function cargarEntidades() {
                     : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${e.name}</span>`;
 
                 div.innerHTML = `
-                    <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
-                    ${nombre}
-                    ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
-                `;
+      <img src="${e.imageUrl || 'img/default.jpg'}" alt="${e.name}" />
+      ${nombre}
+      ${contenedor.id.includes("escritor") ? `<button class="boton-eliminar" onclick="eliminarEntidad(${e.id})">delete</button>` : ""}
+    `;
                 contenedor.appendChild(div);
             });
         });
@@ -318,6 +318,7 @@ async function cargarEntidades() {
         alert("No se pudieron cargar las entidades. Revisa la consola.");
     }
 }
+
 
 // Modificado para la implementacion de la api
 async function cargarProductos() {
