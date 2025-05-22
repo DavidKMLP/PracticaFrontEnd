@@ -90,9 +90,17 @@ function mostrarVistaPorRol(usuario) {
 
     //Mostrar informacion usuario conectado
     const userInfo = document.getElementById('usuario-conectado');
-    if (userInfo) {
-        userInfo.textContent = `Conectado como: ${usuario.username}`;
+    const nombreUsuario = document.getElementById('nombre-usuario');
+
+    if (userInfo && nombreUsuario) {
+        nombreUsuario.textContent = usuario.username;
         userInfo.style.display = 'block';
+
+        localStorage.setItem("usuarioUsername", usuario.username);
+
+        nombreUsuario.addEventListener("click", () => {
+            window.location.href = "usuario_informacion.html";
+        });
     }
 
     //Gestion de usuarios

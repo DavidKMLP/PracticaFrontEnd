@@ -28,7 +28,7 @@
         </div>
         <button type="submit">Login</button>
       </form>
-      
+
       <!-- Registro -->
       <div id="registro-link" style="margin-top: 0.5rem; align-self: flex-end;">
         <span style="color: #fff;">¿No tiene cuenta? </span>
@@ -38,7 +38,10 @@
       <!-- Contenedor de logout (visible al loguear) -->
       <div id="contenedor-logout" class="formulario-inicio-sesion"
         style="display: none; flex-direction: row; align-items: center; gap: 1rem;">
-        <p id="usuario-conectado" class="info-usuario" style="margin: 0;"></p>
+        <p id="usuario-conectado" class="info-usuario" style="margin: 0;">
+          Conectado como: <span id="nombre-usuario"
+            style="cursor: pointer; text-decoration: underline; color: #8b86ff;"></span>
+        </p>
         <button id="boton-cerrar-sesion">Logout</button>
       </div>
 

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Registro de Usuario</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
+
 <body>
   <header>
     <h1>Registro de Usuario</h1>
@@ -13,16 +15,27 @@
 
   <main>
     <form id="formulario-registro" class="formulario">
-      <label>Email:
-        <input type="email" name="email" id="email" required />
-      </label>
       <label>Nombre de usuario:
-        <input type="text" name="username" id="username" required />
+        <input type="text" id="username" required />
       </label>
+
       <label>Contraseña:
-        <input type="password" name="password" id="password" required />
+        <input type="password" id="password" required />
       </label>
-      <button type="submit">Registrarse</button>
+
+      <button type="button" id="btn-comprobar">Comprobar usuario</button>
+
+      <div id="campos-adicionales" style="display: none;">
+        <label>Email:
+          <input type="email" id="email" required />
+        </label>
+
+        <label>Fecha de nacimiento:
+          <input type="date" id="birthdate" required />
+        </label>
+
+        <button type="submit">Registrarse</button>
+      </div>
     </form>
 
     <p id="mensaje-registro" style="text-align: center;"></p>
@@ -30,46 +43,70 @@
 
   <script>
     const formulario = document.getElementById("formulario-registro");
+    const mensaje = document.getElementById("mensaje-registro");
+    const btnComprobar = document.getElementById("btn-comprobar");
+    const camposAdicionales = document.getElementById("campos-adicionales");
 
-    formulario.addEventListener("submit", async function (e) {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value.trim();
+    btnComprobar.addEventListener("click", async () => {
       const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      const mensaje = document.getElementById("mensaje-registro");
+      if (!username) {
+        mensaje.textContent = "Introduce un nombre de usuario.";
+        mensaje.style.color = "salmon";
+        return;
+      }
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/users", {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/users/username/${username}`);
+
+        if (res.status === 204) {
+          mensaje.textContent = "El nombre de usuario ya existe.";
+          mensaje.style.color = "salmon";
+        } else {
+          mensaje.textContent = "Usuario disponible. Completa el registro.";
+          mensaje.style.color = "lightgreen";
+          camposAdicionales.style.display = "block";
+        }
+      } catch (e) {
+        mensaje.textContent = "Error al comprobar el usuario.";
+        mensaje.style.color = "salmon";
+        console.error(e);
+      }
+    });
+
+    formulario.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const birthdate = document.getElementById("birthdate").value;
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/v1/users", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            email,
-            username,
-            password
-          })
+          body: JSON.stringify({ username, password, email, birthdate })
         });
 
-        if (response.ok) {
-          mensaje.textContent = "Usuario registrado correctamente. Redirigiendo al login...";
+        if (res.ok) {
+          mensaje.textContent = "Usuario registrado correctamente. Redirigiendo...";
           mensaje.style.color = "lightgreen";
           setTimeout(() => {
             window.location.href = "index.html";
           }, 2000);
         } else {
-          const errorData = await response.json();
-          mensaje.textContent = "Error en el registro: " + (errorData.detail || response.statusText);
+          const data = await res.json();
+          mensaje.textContent = "Error: " + (data.detail || "Registro fallido.");
           mensaje.style.color = "salmon";
         }
-
-      } catch (error) {
-        mensaje.textContent = "Error al conectar con el servidor.";
+      } catch (e) {
+        mensaje.textContent = "Error de conexión con el servidor.";
         mensaje.style.color = "salmon";
       }
     });
   </script>
 </body>
+
 </html>
