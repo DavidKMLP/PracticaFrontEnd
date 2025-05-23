@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Detalle de la Asociación</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Anales de la Ciencia</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main class="pagina-producto" id="detalle-asociacion"></main>
+
+  <script>
+    let asociacion = null;
+
+    async function mostrarAsociacion() {
+      asociacion = await obtenerAsociacionDesdeAPI();
+      const contenedor = document.getElementById('detalle-asociacion');
+      const puedeEditar = localStorage.getItem("userRol") === "writer";
+
+      if (!asociacion) {
+        contenedor.innerHTML = "<p>Asociación no encontrada.</p>";
+        return;
+      }
+
+      contenedor.innerHTML = `
+        <header class="cabecera-wiki">
+          <h1 class="titulo-wiki">${asociacion.name}</h1>
+          <img src="${asociacion.imageUrl || 'img/default.jpg'}" alt="${asociacion.name}" class="imagen-wiki" />
+          ${puedeEditar ? `
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button class="boton-editar" onclick="editarAsociacionDesdeVista()">Editar datos</button>
+            <button class="boton-editar" onclick="editarRelacionesAsociacion()">Editar relaciones</button>
+          </div>
+          ` : ""}
+        </header>
+
+        <section class="datos-wiki">
+          <table>
+            <tr><th>Sitio Web</th><td><a href="${asociacion.webURL}" target="_blank">${asociacion.webURL}</a></td></tr>
+            <tr><th>Fecha de creación</th><td>${asociacion.birthDate || "No disponible"}</td></tr>
+            <tr><th>Fecha de disolución</th><td>${asociacion.deathDate || "No disponible"}</td></tr>
+            <tr><th>Wiki</th><td><a href="${asociacion.wikiUrl}" target="_blank">Ver en Wikipedia</a></td></tr>
+          </table>
+        </section>
+
+        <section class="relacionados">
+          <h2>Entidades Relacionadas</h2>
+          <div class="cuadricula-datos" id="entidades-relacionadas"></div>
+        </section>
+      `;
+
+      if (asociacion.entidades?.length > 0) {
+        asociacion.entidades.forEach(renderizarEntidadRelacionada);
+      }
+    }
+
+    async function obtenerAsociacionDesdeAPI() {
+      const id = localStorage.getItem("asociacionSeleccionada");
+      if (!id) return null;
+
+      const response = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}`);
+      if (!response.ok) {
+        console.error("Error al obtener la asociación por ID");
+        return null;
+      }
+
+      const result = await response.json();
+      return result.asociacion;
+    }
+
+    function editarAsociacionDesdeVista() {
+      localStorage.setItem("asociacionEditando", asociacion.name);
+      localStorage.setItem("asociacionEditandoId", asociacion.id);
+      window.location.href = "editar-asociacion.html";
+    }
+
+    function editarRelacionesAsociacion() {
+      localStorage.setItem("asociacionSeleccionada", asociacion.id);
+      window.location.href = "editar-relaciones-asociacion.html";
+    }
+
+    function verEntidad(id) {
+      localStorage.setItem("entidadSeleccionada", id);
+    }
+
+    async function renderizarEntidadRelacionada(id) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/entities/${id}`);
+        const data = await res.json();
+        const entidad = data.entity;
+
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+          <img src="${entidad.imageUrl || 'img/default.jpg'}" alt="${entidad.name}" />
+          <a href="entidad.html" onclick="verEntidad(${entidad.id})">${entidad.name}</a>
+        `;
+        document.getElementById("entidades-relacionadas").appendChild(div);
+      } catch (error) {
+        console.error(`Error al cargar entidad ID ${id}:`, error);
+      }
+    }
+
+    mostrarAsociacion();
+  </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
+</body>
+</html>
