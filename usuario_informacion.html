@@ -1,135 +1,132 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>Información de Usuario</title>
-    <link rel="stylesheet" href="css/styles.css" />
+  <meta charset="UTF-8" />
+  <title>Información de Usuario</title>
+  <link rel="stylesheet" href="css/styles.css" />
 </head>
-
 <body>
-    <header>
-        <h1>Mi Perfil</h1>
-        <a href="index.html" class="boton-volver">← Volver</a>
-    </header>
+  <header>
+    <h1>Mi Perfil</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
 
-    <main class="formulario">
-        <form id="formulario-usuario">
-            <p><strong>Nombre de usuario (no modificable):</strong> <span id="usuario-id"></span></p>
+  <main class="formulario">
+    <form id="formulario-usuario" autocomplete="off">
+      <p><strong>Nombre de usuario:</strong> <span id="usuario-id"></span></p>
 
-            <label>Correo electrónico:
-                <input type="email" id="email" required />
-            </label>
+      <label>Correo electrónico:
+        <input type="email" id="email" required />
+      </label>
 
-            <label>Fecha de nacimiento:
-                <input type="date" id="fecha-nacimiento" required />
-            </label>
+      <label>Fecha de nacimiento:
+        <input type="date" id="fecha-nacimiento" required />
+      </label>
 
-            <label>Contraseña nueva:
-                <input type="password" id="nueva-contrasena" placeholder="Dejar en blanco si no desea cambiarla" />
-            </label>
+      <label>Contraseña nueva:
+        <input type="password" id="nueva-contrasena"  autocomplete="new-password" />
+      </label>
 
-            <button type="submit">Guardar cambios</button>
-        </form>
-    </main>
+      <button type="submit">Guardar cambios</button>
+    </form>
+  </main>
 
-    <script>
-        const token = localStorage.getItem("accessToken");
+  <script>
+    const token = localStorage.getItem("accessToken");
 
-        function decodeToken(token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                return payload;
-            } catch (e) {
-                console.error("Token inválido", e);
-                return null;
-            }
-        }
+    function decodeToken(token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload;
+      } catch (e) {
+        console.error("Token inválido", e);
+        return null;
+      }
+    }
 
-        async function cargarDatosUsuario() {
-            if (!token) {
-                alert("No estás autenticado.");
-                return;
-            }
+    async function cargarDatosUsuario() {
+      if (!token) {
+        alert("No estás autenticado.");
+        return;
+      }
 
-            const payload = decodeToken(token);
-            if (!payload || !payload.uid) {
-                alert("No se pudo determinar el ID del usuario.");
-                return;
-            }
+      const payload = decodeToken(token);
+      if (!payload || !payload.uid) {
+        alert("No se pudo determinar el ID del usuario.");
+        return;
+      }
 
-            const userId = payload.uid;
-            localStorage.setItem("userId", userId);
+      const userId = payload.uid;
+      localStorage.setItem("userId", userId);
 
-            try {
-                const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${userId}`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "If-Match": "*"
-                    }
-                });
-
-                if (!res.ok) throw new Error(await res.text());
-
-                const etagUsuario = res.headers.get("etag");
-                localStorage.setItem("userEtag", etagUsuario);
-
-                const data = await res.json();
-                const user = data.user;
-
-                document.getElementById("usuario-id").textContent = user.username;
-                document.getElementById("email").value = user.email || "";
-                document.getElementById("fecha-nacimiento").value = user.fechaNacimiento || "";
-
-            } catch (e) {
-                alert("Error al cargar tus datos personales.");
-                console.error(e);
-            }
-        }
-
-        document.getElementById("formulario-usuario").addEventListener("submit", async function (e) {
-            e.preventDefault();
-
-            const userId = localStorage.getItem("userId");
-            const etagUsuario = localStorage.getItem("userEtag");
-
-            const email = document.getElementById("email").value;
-            const birthdate = document.getElementById("fecha-nacimiento").value;
-            const password = document.getElementById("nueva-contrasena").value;
-
-            const payload = {
-                email: email,
-                ...(password && { password }),
-                fechaNacimiento: birthdate
-            };
-
-            try {
-                const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${userId}`, {
-                    method: "PUT",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        "If-Match": etagUsuario
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!res.ok) throw new Error(await res.text());
-
-                alert("Datos actualizados correctamente.");
-                window.location.href = "index.html";
-            } catch (e) {
-                alert("No se pudieron guardar los cambios.");
-                console.error(e);
-            }
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${userId}`, {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "If-Match": "*"
+          }
         });
 
-        cargarDatosUsuario();
-    </script>
+        if (!res.ok) throw new Error(await res.text());
 
-    <footer class="footer-ejemplo">
-        <h2>Proyecto Front End David Lew Pérez 2025</h2>
-    </footer>
+        const etagUsuario = res.headers.get("etag");
+        localStorage.setItem("userEtag", etagUsuario);
+
+        const data = await res.json();
+        const user = data.user;
+
+        document.getElementById("usuario-id").textContent = user.username;
+        document.getElementById("email").value = user.email || "";
+        document.getElementById("fecha-nacimiento").value = user.fechaNacimiento || "";
+
+      } catch (e) {
+        alert("Error al cargar tus datos personales.");
+        console.error(e);
+      }
+    }
+
+    document.getElementById("formulario-usuario").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const userId = localStorage.getItem("userId");
+      const etagUsuario = localStorage.getItem("userEtag");
+
+      const email = document.getElementById("email").value;
+      const birthdate = document.getElementById("fecha-nacimiento").value;
+      const password = document.getElementById("nueva-contrasena").value;
+
+      const payload = {
+        email: email,
+        ...(password && { password }),
+        fechaNacimiento: birthdate
+      };
+
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/users/${userId}`, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "If-Match": etagUsuario
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) throw new Error(await res.text());
+
+        alert("Datos actualizados correctamente.");
+        window.location.href = "index.html";
+      } catch (e) {
+        alert("No se pudieron guardar los cambios.");
+        console.error(e);
+      }
+    });
+
+    cargarDatosUsuario();
+  </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
 </body>
-
 </html>
