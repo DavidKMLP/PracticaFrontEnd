@@ -119,11 +119,13 @@ function mostrarVistaPorRol(usuario) {
         cargarProductos();
         cargarCientificos();
         cargarEntidades();
+        cargarAsociaciones();
     } else if (usuario.rol === 'writer') {
         document.getElementById('vista-escritor').style.display = 'block';
         cargarProductos();
         cargarCientificos();
         cargarEntidades();
+        cargarAsociaciones();
     } else if (usuario.rol === 'inactive') {
         alert('El usuario está inactivo hasta la validación de un administrador. Gracias por su paciencia.');
         document.getElementById('formulario-inicio-sesion').style.display = 'block';
@@ -182,6 +184,7 @@ document.getElementById('boton-cerrar-sesion').addEventListener('click', functio
     cargarProductos();
     cargarCientificos();
     cargarEntidades();
+    cargarAsociaciones();
 
 });
 
@@ -263,6 +266,32 @@ function renderizarListaEntidades(entidades, contenedorID, mostrarBotones = fals
     });
 }
 
+function renderizarListaAsociaciones(asociaciones, contenedorID, mostrarBotones = false) {
+    const contenedor = document.getElementById(contenedorID);
+    if (!contenedor) return;
+    contenedor.innerHTML = "";
+
+    const token = localStorage.getItem("accessToken");
+    const isAutenticado = !!token;
+
+    asociaciones.forEach(a => {
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+
+        const nombre = isAutenticado
+            ? `<a href="asociacion.html" onclick="verAsociacion(${a.id})">${a.name}</a>`
+            : `<span class="acceso-bloqueado" title="Inicia sesión para ver">${a.name}</span>`;
+
+        div.innerHTML = `
+      <img src="${a.imageUrl || 'img/default.jpg'}" alt="${a.name}" />
+      ${nombre}
+      ${mostrarBotones ? `<button class="boton-eliminar" onclick="eliminarAsociacion(${a.id})">delete</button>` : ""}
+    `;
+        contenedor.appendChild(div);
+    });
+}
+
+
 //Modificado para la implementacion de la API
 async function cargarCientificos() {
     console.log("▶️ Ejecutando cargarCientificos()");
@@ -330,6 +359,27 @@ async function cargarProductos() {
         alert("No se pudieron cargar los productos. Revisa la consola.");
     }
 }
+
+//Con implementacion API
+async function cargarAsociaciones() {
+    console.log("▶️ Ejecutando cargarAsociaciones()");
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/asociaciones");
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+        const result = await response.json();
+        const asociaciones = result.asociaciones.map(a => a.asociacion);
+
+        renderizarListaAsociaciones(asociaciones, "contenedor-asociaciones-normal", false);
+        renderizarListaAsociaciones(asociaciones, "contenedor-asociaciones-lector", false);
+        renderizarListaAsociaciones(asociaciones, "contenedor-asociaciones-escritor", true);
+
+    } catch (error) {
+        console.error("❌ Error al cargar asociaciones:", error);
+        alert("No se pudieron cargar las asociaciones. Revisa la consola.");
+    }
+}
+
 
 // Eliminar
 async function eliminarProducto(id) {
@@ -423,6 +473,10 @@ function verCientifico(id) {
     localStorage.setItem("cientificoSeleccionadoId", id);
 }
 
+function verAsociacion(id) {
+    localStorage.setItem("asociacionSeleccionada", id);
+}
+
 if (performance.getEntriesByType("navigation")[0].type === "back_forward") {
     window.location.reload();
 }
@@ -436,5 +490,8 @@ cargarEntidades();
 
 //productos con API
 cargarProductos();
+
+//asociaciones con API
+cargarAsociaciones();
 
 
