@@ -147,7 +147,9 @@ function restablecerVistaPorDefecto() {
         "contenedor-cientificos-escritor",
         "contenedor-entidades-normal",
         "contenedor-entidades-lector",
-        "contenedor-entidades-escritor"
+        "contenedor-entidades-escritor",
+        "contenedor-entidades-lector",
+        "contenedor-entidades-escritor",
     ];
 
     ids.forEach(id => {

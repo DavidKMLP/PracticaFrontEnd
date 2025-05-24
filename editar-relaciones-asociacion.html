@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Relaciones de Asociación</title>
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Editar Relaciones de Asociación</h1>
+        <a href="index.html" class="boton-volver">&larr; Volver</a>
+    </header>
+
+    <main class="formulario">
+        <section id="bloque-datos">
+            <p><strong>Asociación:</strong> <span id="nombre-elemento"></span></p>
+
+            <div class="seccion-datos">
+                <h3>Entidades relacionadas actualmente:</h3>
+                <ul id="lista-entidades"></ul>
+
+                <label>Agregar entidades:
+                    <select id="select-entidades">
+                        <option value="">-- Ninguna --</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="seccion-datos">
+                <label>Tipo de operación:
+                    <select id="tipo-operacion">
+                        <option value="add">Añadir relación</option>
+                        <option value="rem">Eliminar relación</option>
+                    </select>
+                </label>
+            </div>
+
+            <button id="btn-guardar">Aplicar operación</button>
+        </section>
+    </main>
+
+    <script>
+        const id = localStorage.getItem("asociacionSeleccionada");
+        const token = localStorage.getItem("accessToken");
+
+        const nombreElemento = document.getElementById("nombre-elemento");
+        const listaEntidades = document.getElementById("lista-entidades");
+        const selectEntidades = document.getElementById("select-entidades");
+        const tipoOperacion = document.getElementById("tipo-operacion");
+        const btnGuardar = document.getElementById("btn-guardar");
+
+        async function cargarDatos() {
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}`);
+                const data = await response.json();
+                nombreElemento.textContent = data.asociacion.name;
+
+                const entidadesIds = data.asociacion.entidades || [];
+
+                for (const entidadId of entidadesIds) {
+                    const res = await fetch(`http://127.0.0.1:8000/api/v1/entities/${entidadId}`);
+                    const entidadData = await res.json();
+                    const li = document.createElement("li");
+                    li.textContent = entidadData.entity.name;
+                    listaEntidades.appendChild(li);
+                }
+            } catch (error) {
+                alert("Error al cargar la asociación.");
+                console.error(error);
+            }
+        }
+
+        async function cargarOpcionesEntidades() {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/v1/entities");
+                const data = await response.json();
+                data.entities.forEach(item => {
+                    const entidad = item.entity;
+                    const option = document.createElement("option");
+                    option.value = entidad.id;
+                    option.textContent = entidad.name;
+                    selectEntidades.appendChild(option);
+                });
+            } catch (e) {
+                console.error("Error al cargar entidades:", e);
+            }
+        }
+
+        btnGuardar.addEventListener("click", async function () {
+            const entidadId = parseInt(selectEntidades.value);
+            const operacion = tipoOperacion.value;
+
+            if (isNaN(entidadId)) {
+                alert("Selecciona una entidad.");
+                return;
+            }
+
+            try {
+                const res = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}/entities/${operacion}/${entidadId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+
+                if (!res.ok) {
+                    const msg = await res.text();
+                    throw new Error(msg);
+                }
+
+                alert("Relación actualizada correctamente.");
+                window.location.href = "index.html";
+            } catch (e) {
+                alert("Error al aplicar la relación.");
+                console.error(e);
+            }
+        });
+
+        cargarDatos().then(() => cargarOpcionesEntidades());
+    </script>
+
+    <footer class="footer-ejemplo">
+        <h2>Proyecto Front End David Lew Pérez 2025</h2>
+    </footer>
+</body>
+
+</html>

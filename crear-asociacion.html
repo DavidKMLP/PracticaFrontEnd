@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Crear Asociación</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>Crear Asociación</h1>
+    <a href="index.html" class="boton-volver">&larr; Volver</a>
+  </header>
+
+  <main>
+    <form id="formulario-crear-asociacion" class="formulario">
+      <label>Nombre: <input type="text" name="nombre" required /></label>
+      <label>Web (URL): <input type="url" name="webURL" required /></label>
+      <label>Fecha de creación: <input type="date" name="fechaCreacion" /></label>
+      <label>Fecha de disolución: <input type="date" name="fechaDisolucion" /></label>
+      <label>Wikipedia (URL): <input type="url" name="wiki" /></label>
+      <label>Imagen (URL): <input type="url" name="imagen" /></label>
+      <button type="submit">Crear Asociación</button>
+    </form>
+  </main>
+
+  <script>
+    const formulario = document.getElementById("formulario-crear-asociacion");
+
+    formulario.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(formulario);
+      const token = localStorage.getItem("accessToken");
+
+      const nuevaAsociacion = {
+        name: formData.get("nombre"),
+        url: formData.get("webURL"),
+        birthDate: formData.get("fechaCreacion") || null,
+        deathDate: formData.get("fechaDisolucion") || null,
+        imageUrl: formData.get("imagen") || null,
+        wikiUrl: formData.get("wiki") || null
+      };
+
+      console.log("➡️ Enviando nueva asociación:", nuevaAsociacion);
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/asociaciones", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(nuevaAsociacion)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        alert("Asociación creada correctamente.");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Error al crear la asociación.");
+        console.error(error);
+      }
+    });
+  </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
+</body>
+</html>

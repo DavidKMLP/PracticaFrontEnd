@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Editar Asociación</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Editar Asociación</h1>
+    <a href="index.html" class="boton-volver">← Volver</a>
+  </header>
+
+  <main>
+    <form id="formulario-editar-asociacion" class="formulario">
+      <label>Nombre: <input type="text" name="nombre" required /></label>
+      <label>Web (URL): <input type="url" name="webURL" required /></label>
+      <label>Fecha de creación: <input type="date" name="fechaCreacion" /></label>
+      <label>Fecha de disolución: <input type="date" name="fechaDisolucion" /></label>
+      <label>Wikipedia (URL): <input type="url" name="wiki" /></label>
+      <label>Imagen (URL): <input type="url" name="imagen" /></label>
+      <button type="submit">Guardar Cambios</button>
+    </form>
+  </main>
+
+  <script>
+    const formulario = document.getElementById("formulario-editar-asociacion");
+    let asociacionActual = null;
+    let etagAsociacion = null;
+
+    async function cargarAsociacion() {
+      const id = localStorage.getItem("asociacionEditandoId");
+      if (!id) {
+        alert("ID de la asociación no definido.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}`);
+        if (!response.ok) throw new Error("No se pudo obtener la asociación.");
+        etagAsociacion = response.headers.get("etag");
+        const data = await response.json();
+        asociacionActual = data.asociacion;
+
+        formulario.nombre.value = asociacionActual.name;
+        formulario.webURL.value = asociacionActual.url;
+        formulario.fechaCreacion.value = asociacionActual.birthDate || "";
+        formulario.fechaDisolucion.value = asociacionActual.deathDate || "";
+        formulario.wiki.value = asociacionActual.wikiUrl || "";
+        formulario.imagen.value = asociacionActual.imageUrl || "";
+
+      } catch (error) {
+        alert("Error al cargar los datos de la asociación.");
+        console.error(error);
+        window.location.href = "index.html";
+      }
+    }
+
+    formulario.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const formData = new FormData(formulario);
+      const token = localStorage.getItem("accessToken");
+
+      const actualizada = {
+        name: formData.get("nombre"),
+        url: formData.get("webURL"),
+        birthDate: formData.get("fechaCreacion") || null,
+        deathDate: formData.get("fechaDisolucion") || null,
+        wikiUrl: formData.get("wiki") || null,
+        imageUrl: formData.get("imagen") || null
+      };
+
+      try {
+        console.log("➡️ Datos que se van a enviar:", actualizada);
+        const response = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${asociacionActual.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+            "If-Match": etagAsociacion
+          },
+          body: JSON.stringify(actualizada)
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        alert("Asociación actualizada correctamente.");
+        window.location.href = "index.html";
+      } catch (error) {
+        alert("Error al actualizar la asociación.");
+        console.error(error);
+      }
+    });
+
+    cargarAsociacion();
+  </script>
+
+  <footer class="footer-ejemplo">
+    <h2>Proyecto Front End David Lew Pérez 2025</h2>
+  </footer>
+</body>
+
+</html>
