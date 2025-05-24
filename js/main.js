@@ -462,6 +462,33 @@ async function eliminarEntidad(id) {
     }
 }
 
+async function eliminarAsociacion(id) {
+    const token = localStorage.getItem("accessToken");
+
+    if (confirm("¿Estás seguro de que quieres eliminar esta asociación?")) {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText);
+            }
+
+            alert("Asociación eliminada correctamente.");
+            cargarAsociaciones();  // Recargar la lista tras la eliminación
+        } catch (error) {
+            alert("Error al eliminar la asociación.");
+            console.error("❌ Error en eliminarAsociacion:", error);
+        }
+    }
+}
+
+
 // Navegación entre vistas
 function verProducto(id) {
     localStorage.setItem("productoSeleccionado", id);
