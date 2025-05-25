@@ -40,6 +40,17 @@
       </div>
 
       <div class="seccion-datos">
+        <h3>Asociaciones relacionadas actualmente:</h3>
+        <ul id="lista-asociaciones"></ul>
+
+        <label>Agregar asociaciones:
+          <select id="select-asociaciones">
+            <option value="">-- Ninguna --</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="seccion-datos">
         <label>Tipo de operación:
           <select id="tipo-operacion">
             <option value="add">Añadir relación</option>
@@ -47,7 +58,6 @@
           </select>
         </label>
       </div>
-
       <button id="btn-guardar">Aplicar operación</button>
     </section>
   </main>
@@ -61,8 +71,10 @@
     const listaCientificos = document.getElementById("lista-cientificos");
     const selectProductos = document.getElementById("select-productos");
     const selectCientificos = document.getElementById("select-cientificos");
+    const selectAsociaciones = document.getElementById("select-asociaciones");
     const tipoOperacion = document.getElementById("tipo-operacion");
     const btnGuardar = document.getElementById("btn-guardar");
+
 
     let relacionesActuales = { products: [], persons: [] };
 
@@ -100,6 +112,22 @@
           }
         });
 
+        //Mostrar asociaciones
+        const listaAsociaciones = document.getElementById("lista-asociaciones");
+
+        entidad.asociaciones?.forEach(async id => {
+          try {
+            const res = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}`);
+            const data = await res.json();
+            const li = document.createElement("li");
+            li.textContent = data.asociacion.name;
+            listaAsociaciones.appendChild(li);
+          } catch (e) {
+            console.error("Error al cargar nombre de la asociación:", e);
+          }
+        });
+
+
       } catch (error) {
         alert("Error al cargar la entidad actual");
         console.error(error);
@@ -110,10 +138,20 @@
       try {
         const response = await fetch(url);
         const data = await response.json();
-        const lista = tipoRelacion === 'products' ? data.products : data.persons;
+        //modificado para permitir asociaciones
+        const lista = tipoRelacion === 'products'
+          ? data.products
+          : tipoRelacion === 'persons'
+            ? data.persons
+            : data.asociaciones;
 
         lista.forEach(item => {
-          const el = tipoRelacion === 'products' ? item.product : item.person;
+          const el = tipoRelacion === 'products'
+            ? item.product
+            : tipoRelacion === 'persons'
+              ? item.person
+              : item.asociacion;
+
           const option = document.createElement("option");
           option.value = el.id;
           option.textContent = el.name;
@@ -127,6 +165,7 @@
     btnGuardar.addEventListener("click", async function () {
       const productoId = parseInt(selectProductos.value);
       const cientificoId = parseInt(selectCientificos.value);
+      const asociacionId = parseInt(selectAsociaciones.value);
       const operacion = tipoOperacion.value;
 
       const acciones = [];
@@ -140,6 +179,13 @@
 
       if (!isNaN(cientificoId)) {
         acciones.push(fetch(`http://127.0.0.1:8000/api/v1/entities/${id}/persons/${operacion}/${cientificoId}`, {
+          method: "PUT",
+          headers: { "Authorization": `Bearer ${token}` }
+        }));
+      }
+
+      if (!isNaN(asociacionId)) {
+        acciones.push(fetch(`http://127.0.0.1:8000/api/v1/entities/${id}/asociaciones/${operacion}/${asociacionId}`, {
           method: "PUT",
           headers: { "Authorization": `Bearer ${token}` }
         }));
@@ -163,6 +209,7 @@
     cargarDatos().then(() => {
       cargarOpciones("http://127.0.0.1:8000/api/v1/products", selectProductos, "products");
       cargarOpciones("http://127.0.0.1:8000/api/v1/persons", selectCientificos, "persons");
+      cargarOpciones("http://127.0.0.1:8000/api/v1/asociaciones", selectAsociaciones, "asociaciones");
     });
   </script>
 

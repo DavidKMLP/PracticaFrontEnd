@@ -57,6 +57,9 @@
 
           <h2>Productos Relacionados</h2>
           <div class="cuadricula-datos" id="productos-relacionados"></div>
+          
+          <h2>Asociaciones Relacionadas</h2>
+          <div class="cuadricula-datos" id="asociaciones-relacionadas"></div>
         </section>
       `;
 
@@ -66,6 +69,10 @@
 
       if (entidad.products?.length > 0) {
         entidad.products.forEach(renderizarProductoRelacionado);
+      }
+
+      if (entidad.asociaciones?.length > 0) {
+        entidad.asociaciones.forEach(renderizarAsociacionRelacionada);
       }
 
     }
@@ -106,6 +113,11 @@
       localStorage.setItem("productoSeleccionado", id);
     }
 
+    //Bi-direccional
+    function verAsociacion(id) {
+      localStorage.setItem("asociacionSeleccionada", id);
+    }
+
     async function renderizarCientificoRelacionado(id) {
       try {
         const res = await fetch(`http://127.0.0.1:8000/api/v1/persons/${id}`);
@@ -139,6 +151,26 @@
         document.getElementById("productos-relacionados").appendChild(div);
       } catch (error) {
         console.error(`Error al cargar producto ID ${id}:`, error);
+      }
+    }
+
+    async function renderizarAsociacionRelacionada(id) {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/api/v1/asociaciones/${id}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        const data = await res.json();
+        const asociacion = data.asociacion;
+
+        const div = document.createElement("div");
+        div.className = "elemento-datos";
+        div.innerHTML = `
+      <img src="${asociacion.imageUrl || 'img/default.jpg'}" alt="${asociacion.name}" />
+      <a href="asociacion.html" onclick="verAsociacion(${asociacion.id})">${asociacion.name}</a>
+    `;
+        document.getElementById("asociaciones-relacionadas").appendChild(div);
+      } catch (error) {
+        console.error(`Error al cargar asociación ID ${id}:`, error);
       }
     }
 
