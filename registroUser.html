@@ -47,6 +47,7 @@
     const btnComprobar = document.getElementById("btn-comprobar");
     const camposAdicionales = document.getElementById("campos-adicionales");
 
+    //Comprobar que el nombre de usuario no existe haciendo un fetch al get por el nombre de Usuarios
     btnComprobar.addEventListener("click", async () => {
       const username = document.getElementById("username").value.trim();
       if (!username) {
